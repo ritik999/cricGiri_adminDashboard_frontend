@@ -12,12 +12,12 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path='/login' element={<Login />} />
-      <Route path='/' element={<DashboardProtectedRoute />}>
-        <Route path='/' element={<Dashboard />}>
-          <Route path='' element={<DataTable />} />
-        </Route>
+      {/* <Route path='/' element={<DashboardProtectedRoute />}> */}
+      <Route path='/' element={<Dashboard />}>
+        <Route path='/master/:select' element={<DataTable />} />
         <Route path='/profile' element={<UserProfile />} />
       </Route>
+      {/* </Route> */}
       <Route path="*" element={<NotFoundPage />} />
     </>
   )

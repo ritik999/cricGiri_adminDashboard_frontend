@@ -3,13 +3,12 @@ import { Link } from 'react-router';
 import { motion } from 'framer-motion'; 
 
 const NotFoundPage = () => {
-    console.log('notFound page render');
     
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-teal-400 via-blue-500 to-indigo-700">
             <div className="text-center">
                 <motion.img 
-                    src="../src/assets/404.png" 
+                    src="/assets/404.png" 
                     alt="404"
                     className="mx-auto mb-8 max-w-[80%] md:max-w-md mask-image"
                     initial={{ opacity: 0 }}
