@@ -7,6 +7,7 @@ import DashboardProtectedRoute from './components/DashboardProtectedRoute';
 import NotFoundPage from './components/ErrorPage';
 import UserProfile from './pages/Profile';
 import Tournament from './pages/Tournament';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 const router = createBrowserRouter(
@@ -25,10 +26,13 @@ const router = createBrowserRouter(
   )
 )
 
+const queryClient = new QueryClient()
 
 const App = () => {
   return (
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   )
 }
 

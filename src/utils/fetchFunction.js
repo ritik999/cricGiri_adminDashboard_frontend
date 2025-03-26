@@ -1,4 +1,4 @@
-export const fetchData = async (api, reqMethod, setFun, bodyData = {}) => {
+export const fetchData = async (api, reqMethod, bodyData = {}) => {
     try {
         const res = await fetch(api, {
             method: reqMethod,
@@ -14,7 +14,8 @@ export const fetchData = async (api, reqMethod, setFun, bodyData = {}) => {
         }
 
         const data = await res.json();
-        setFun(data?.result || []);
+        // setFun(data?.result || []);
+        return data.result;
     } catch (error) {
         console.error('Error during fetch:', error);
     }

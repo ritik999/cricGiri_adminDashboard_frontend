@@ -1,31 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchData } from '../utils/fetchFunction';
 
 const Location = () => {
-    const [countriesList, setCountriesList] = useState([]);
-    const [stateList, setStatesList] = useState([]);
-    const [cityList, setCityList] = useState([]);
     const [country, setCountry] = useState(null);
     const [state, setState] = useState(null);
     const [city, setCity] = useState(null);
 
-    useEffect(() => {
-        fetchData('/admin/master/country', 'POST', setCountriesList);
-    }, []);
+    const { data: countriesList, isLoading: isCountriesLoading } = useQuery({
+        queryKey: ['countries'],
+        queryFn: () => fetchData('/admin/master/country', 'POST'),
+        staleTime: 300000, // 5 minutes in milliseconds
+    });
 
-    useEffect(() => {
-        if (country) {
-            fetchData('/admin/master/states', 'POST', setStatesList, { country_id: country });
-        }
-    }, [country]);
+    const { data: stateList, isLoading: isStatesLoading } = useQuery({
+        queryKey: ['states', country],
+        queryFn: () => fetchData('/admin/master/states', 'POST', { country_id: country }),
+        enabled: !!country, // only run this query if country is selected
+        staleTime: 300000, // 5 minutes in milliseconds
+    });
 
-    useEffect(() => {
-        if (state) {
-            fetchData('/admin/master/citys', 'POST', setCityList, { state_id: state });
-        }
-    }, [state]);
+    const { data: cityList, isLoading: isCitiesLoading } = useQuery({
+        queryKey: ['cities', state],
+        queryFn: () => fetchData('/admin/master/citys', 'POST', { state_id: state }),
+        enabled: !!state,
+        staleTime: 300000,
+    });
+
+    console.log(countriesList);
+    
 
     return (
+        <>
         <div>
             <div className="flex gap-3">
                 <form className="max-w-lg">
@@ -35,11 +41,15 @@ const Location = () => {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     >
                         <option value="">Choose a country</option>
-                        {countriesList.map((ele) => (
-                            <option key={ele.id} value={ele.id}>
-                                {ele.name}
-                            </option>
-                        ))}
+                        {isCountriesLoading ? (
+                            <option>Loading...</option>
+                        ) : (
+                            countriesList?.map((ele) => (
+                                <option key={ele.id} value={ele.id}>
+                                    {ele.name}
+                                </option>
+                            ))
+                        )}
                     </select>
                 </form>
 
@@ -51,11 +61,15 @@ const Location = () => {
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         >
                             <option value="">Choose a state</option>
-                            {stateList.map((ele) => (
-                                <option key={ele.id} value={ele.id}>
-                                    {ele.name}
-                                </option>
-                            ))}
+                            {isStatesLoading ? (
+                                <option>Loading...</option>
+                            ) : (
+                                stateList?.map((ele) => (
+                                    <option key={ele.id} value={ele.id}>
+                                        {ele.name}
+                                    </option>
+                                ))
+                            )}
                         </select>
                     </form>
                 )}
@@ -68,27 +82,21 @@ const Location = () => {
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         >
                             <option value="">Choose a city</option>
-                            {cityList.map((ele) => (
-                                <option key={ele.id} value={ele.id}>
-                                    {ele.name}
-                                </option>
-                            ))}
+                            {isCitiesLoading ? (
+                                <option>Loading...</option>
+                            ) : (
+                                cityList?.map((ele) => (
+                                    <option key={ele.id} value={ele.id}>
+                                        {ele.name}
+                                    </option>
+                                ))
+                            )}
                         </select>
                     </form>
                 )}
-
-                {/* {locationSearch.city && (
-                    <div className="flex-1 border-2 rounded-md flex items-center px-2">
-                        <input
-                            className="w-full outline-none border-none bg-transparent focus:outline-none focus:ring-0"
-                            type="text"
-                            placeholder="Search city"
-                        />
-                        <img src="/assets/down-arrow.png" className="w-4 h-4" />
-                    </div>
-                )} */}
             </div>
         </div>
+        </>
     );
 };
 

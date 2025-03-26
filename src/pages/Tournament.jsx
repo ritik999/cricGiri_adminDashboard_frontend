@@ -1,27 +1,19 @@
-import React, { Suspense, useCallback, useEffect, useState } from 'react';
-import Location from '../components/Location';
-import DataTable from '../components/Table';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Spinner, Table } from 'flowbite-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { fetchData } from '../utils/fetchFunction';
 import Pagination from '../components/Pagination';
-import { Spinner, Table } from 'flowbite-react';
 
 const Tournament = () => {
     const [locationId, setLocationId] = useState(null);
     const [isValid, setIsValid] = useState(true);
-    const [responseData, setResponseData] = useState([]);
-    const pathSplit = location.pathname?.split('/');
-    const apiPath = pathSplit[pathSplit.length - 1].split('-').join('').toLowerCase();
-    const [datas, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isEditable, setIsEditable] = useState(null);
-    const [isFilterOpen, setFilterOpen] = useState(false);
     const [currentRows, setCurrentRow] = useState([]);
+    const [responseData, setResponseData] = useState([]);
     const rowsPerPage = 10;
+
     const indexOfLastRow = currentPage * rowsPerPage;
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-    const totalPages = Math.ceil(responseData.length / rowsPerPage);
-    // let currentRows;
 
     const handleInputChange = (e) => {
         const value = e.target.value;
@@ -36,21 +28,27 @@ const Tournament = () => {
         }
     };
 
-    const searchData = (e) => {
-        fetchData('/admin/tournaments/local-tournaments-by-location', 'POST', setResponseData, { user_location_id: locationId })
-    }
+    const searchData = useMutation({
+        mutationFn: () => fetchData('/admin/tournaments/local-tournaments-by-location', 'POST', { user_location_id: locationId }),
+        onSuccess: (data) => {
+            setResponseData(data);
+        },
+        onError: (error) => {
+            console.error("Error fetching data: ", error);
+        }
+    });
 
     const handlePageChange = useCallback((pageNum) => {
         setCurrentPage(pageNum);
     }, []);
 
     useEffect(() => {
-        if (responseData.length === 0) {
-            return
+        if (responseData.length > 0) {
+            setCurrentRow(responseData.slice(indexOfFirstRow, indexOfLastRow));
         }
-        setCurrentRow(responseData.slice(indexOfFirstRow, indexOfLastRow))
-    }, [currentPage, responseData])
+    }, [currentPage, responseData]);
 
+    const totalPages = Math.ceil(responseData.length / rowsPerPage);
 
     return (
         <div>
@@ -63,17 +61,22 @@ const Tournament = () => {
                 />
                 <button
                     disabled={!isValid}
-                    onClick={searchData}
+                    onClick={() => searchData.mutate()}
                     className={`bg-sidebar-foot/70 p-2 rounded-lg font-bold text-white ${!isValid ? 'opacity-50 cursor-not-allowed' : 'hover:bg-sidebar-foot/90 hover:text-black'}`}
                 >
                     Search
                 </button>
             </div>
+
             <div>
-                {responseData.length == 0 ? (
-                    <>
-                        <h1 className='text-center font-bold'>No Data available to Show</h1>
-                    </>
+                {searchData.isLoading ? (
+                    <div className="text-center">
+                        <Spinner />
+                    </div>
+                ) : searchData.isError ? (
+                    <h1 className='text-center text-red-500 font-bold'>Error fetching data</h1>
+                ) : responseData.length === 0 ? (
+                    <h1 className='text-center font-bold'>No Data available to Show</h1>
                 ) : (
                     <>
                         <div>
@@ -87,41 +90,36 @@ const Tournament = () => {
                                         ))}
                                     </Table.Head>
                                     <Table.Body className="divide-y">
-                                        {currentRows?.map((row,index) => (
+                                        {currentRows?.map((row, index) => (
                                             <Table.Row key={row.id || row.Id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                            {(row.id || row.Id) && (
-                                                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                                    {index + 1 }
-                                                </Table.Cell>
-                                            )}
-
+                                                {(row.id || row.Id) && (
+                                                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                                        {index + 1}
+                                                    </Table.Cell>
+                                                )}
                                                 {
                                                     Object.entries(row)
                                                         .filter(([key]) => ['Title', 'StartDate', 'EndDate', 'CategoryName', 'BallTypeName', 'PitchTypeName', 'MatchTypeName', 'CityName', 'StadiumName', 'OrganiserName', 'OrganiserPhone', 'currentStatusName', 'noOfMatchs'].includes(key))
                                                         .map(([key, value]) => {
                                                             return (
-                                                                <Table.Cell>
+                                                                <Table.Cell key={key}>
                                                                     <input
                                                                         type="text"
                                                                         value={value}
-                                                                        onChange={(e) => handleInputChange(e, row.id || row.Id, 'name')}
-                                                                        className={`${isEditable === (row.id || row.Id) ? 'border' : 'border-none'} px-2 py-1 rounded select-none bg-transparent`}
-                                                                        disabled={isEditable !== (row.id || row.Id)}
+                                                                        className="px-2 py-1 rounded select-none bg-transparent border-none"
+                                                                        disabled
                                                                     />
                                                                 </Table.Cell>
                                                             )
                                                         })
                                                 }
-
                                             </Table.Row>
                                         ))}
                                     </Table.Body>
                                 </Table>
                             </div>
                             <div className='sticky bottom-0 mt-5 bg-white py-2 w-full'>
-                                <Suspense fallback={<Spinner color='info' />}>
-                                    <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
-                                </Suspense>
+                                <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
                             </div>
                         </div>
                     </>
@@ -129,6 +127,6 @@ const Tournament = () => {
             </div>
         </div>
     );
-}
+};
 
 export default Tournament;
