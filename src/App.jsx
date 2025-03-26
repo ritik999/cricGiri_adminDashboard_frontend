@@ -6,6 +6,7 @@ import DataTable from './components/Table';
 import DashboardProtectedRoute from './components/DashboardProtectedRoute';
 import NotFoundPage from './components/ErrorPage';
 import UserProfile from './pages/Profile';
+import Tournament from './pages/Tournament';
 
 
 const router = createBrowserRouter(
@@ -15,6 +16,7 @@ const router = createBrowserRouter(
       {/* <Route path='/' element={<DashboardProtectedRoute />}> */}
       <Route path='/' element={<Dashboard />}>
         <Route path='/master/:select' element={<DataTable />} />
+        <Route path='/tournament/tournaments' element={<Tournament />} />
         <Route path='/profile' element={<UserProfile />} />
       </Route>
       {/* </Route> */}

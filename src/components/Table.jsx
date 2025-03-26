@@ -31,7 +31,6 @@ const DataTable = () => {
     } catch (error) {
       setIsLoading(false);
     }
-
   };
 
   useEffect(() => {
@@ -74,29 +73,30 @@ const DataTable = () => {
         <>
           <div>
             <img src={`/assets/filter.png`} onClick={handleFilter} className='h-8 w-8 mb-4 cursor-pointer' alt="image" />
-            <div className='overflow-x-scroll'>
-              <Table className='overflow-x-scroll max-h-50 no-scrollbar border-4' striped>
-                <Table.Head className='text-white sticky top-0 z-20 bg-[#15283c]'>
-                  {datas.length > 0 && datas[0] && Object.keys(datas[0]).map((key, index) => (
-                    <Table.HeadCell key={index} className='bg-[#15283c]'>
-                      {key}
-                    </Table.HeadCell>
-                  ))}
-                  <Table.HeadCell className='bg-[#15283c]'>Action</Table.HeadCell>
-                </Table.Head>
-                <Table.Body className="divide-y">
-                  {currentRows.map((row) => (
-                    <Table.Row key={row.id || row.Id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      {(row.id || row.Id) && (
-                        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                          {row.id || row.Id}
-                        </Table.Cell>
-                      )}
+            <div className='overflow-x-scroll no-scrollbar'>
+            <Table className='overflow-x-scroll max-h-50 no-scrollbar border-4' striped>
+              <Table.Head className='text-white sticky top-0 z-20 bg-[#15283c]'>
+                {datas.length > 0 && datas[0] && Object.keys(datas[0]).map((key, index) => (
+                  <Table.HeadCell key={index} className='bg-[#15283c]'>
+                    {key}
+                  </Table.HeadCell>
+                ))}
+                <Table.HeadCell className='bg-[#15283c]'>Action</Table.HeadCell>
+              </Table.Head>
+              <Table.Body className="divide-y">
+                {currentRows.map((row) => (
+                  <Table.Row key={row.id || row.Id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                    {(row.id || row.Id) && (
+                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                        {row.id || row.Id}
+                      </Table.Cell>
+                    )}
 
-                      {
-                        Object.entries(row)
-                          .filter(([key]) => key.toLocaleLowerCase() !== 'id')
-                          .map(([key, value]) => (
+                    {
+                      Object.entries(row)
+                        .filter(([key]) => key.toLocaleLowerCase() !== 'id')
+                        .map(([key, value]) => {                          
+                          return (
                             <Table.Cell>
                               <input
                                 type="text"
@@ -106,36 +106,38 @@ const DataTable = () => {
                                 disabled={isEditable !== (row.id || row.Id)}
                               />
                             </Table.Cell>
-                          ))
-                      }
+                          )
+                        })
+                    }
 
-                      <Table.Cell>
-                        {isEditable === (row.id || row.Id) ? (
-                          <div className='flex gap-5'>
-                            <p onClick={() => setIsEditable(null)} className="font-medium text-green-600 hover:underline dark:text-green-500 cursor-pointer">
-                              Confirm
-                            </p>
-                            <p onClick={() => setIsEditable(null)} className="font-medium text-red-600 hover:underline dark:text-red-500 cursor-pointer">
-                              Cancel
-                            </p>
-                          </div>
-                        ) : (
-                          <p onClick={() => setIsEditable(row.id || row.Id)} className="font-medium text-cyan-600 hover:underline dark:text-cyan-500 cursor-pointer">
-                            Edit
+                    <Table.Cell>
+                      {isEditable === (row.id || row.Id) ? (
+                        <div className='flex gap-5'>
+                          <p onClick={() => setIsEditable(null)} className="font-medium text-green-600 hover:underline dark:text-green-500 cursor-pointer">
+                            Confirm
                           </p>
-                        )}
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-                {/* bg-[#fafafb] */}
-              </Table>
-              <div className='sticky bottom-0 mt-5 py-2 w-full'>
-                <Suspense fallback={<Spinner color='info' />}>
-                  <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
-                </Suspense>
-              </div>
+                          <p onClick={() => setIsEditable(null)} className="font-medium text-red-600 hover:underline dark:text-red-500 cursor-pointer">
+                            Cancel
+                          </p>
+                        </div>
+                      ) : (
+                        <p onClick={() => setIsEditable(row.id || row.Id)} className="font-medium text-cyan-600 hover:underline dark:text-cyan-500 cursor-pointer">
+                          Edit
+                        </p>
+                      )}
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+              {/* bg-[#fafafb] */}
+            </Table>
             </div>
+            <div className='sticky bottom-0 bg-white mt-5 py-2 w-full'>
+              <Suspense fallback={<Spinner color='info' />}>
+                <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
+              </Suspense>
+            </div>
+            {/* </div> */}
           </div>
         </>
       )}

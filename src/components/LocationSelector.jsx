@@ -63,7 +63,7 @@ const LocationSelector = () => {
                     </motion.select>
                 </div>
 
-                {/* {
+                {
                     selectedCountry && (
                         <>
                             <motion.select
@@ -98,7 +98,7 @@ const LocationSelector = () => {
                             </motion.select>
                         </>
                     )
-                } */}
+                }
 
 
             </div>

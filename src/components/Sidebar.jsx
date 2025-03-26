@@ -1,5 +1,5 @@
 import { HR, Tooltip } from "flowbite-react";
-import { lazy, memo, useState } from "react";
+import { lazy, memo, useEffect, useState } from "react";
 import DropDown from "./DropDown";
 import { MasterSubMenuDatas } from "../constants/SideBarData";
 
@@ -7,8 +7,14 @@ import { MasterSubMenuDatas } from "../constants/SideBarData";
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true);
-    const [active, setActive] = useState(MasterSubMenuDatas.length-1);
+    const path=location.pathname;
+    const newPath=path.split('/');
+    const [active, setActive] = useState('');
 
+
+    useEffect(()=>{
+        setActive(newPath[1] || 'master')
+    },[path])
 
     return (
         <div
@@ -46,9 +52,9 @@ const Sidebar = () => {
                             <li
                                 key={index}
                                 className={`flex  rounded-md p-2 cursor-pointer hover:bg-gray-300/20 backdrop-blur-none text-white text-sm gap-x-4 mb-2 
-              ${Menu.gap ? "mt-9" : "mt-2"} ${index === active && "bg-white/30"
+              ${Menu.gap ? "mt-9" : "mt-2"} ${Menu.title.toLowerCase() === active && "bg-white/30"
                                     } ${!open && 'justify-center'} `}
-                                onClick={() => setActive(index)}
+                                onClick={() => setActive(Menu.title.toLowerCase())}
                             >
 
                                 <div className={`flex gap-4 w-full`}>
