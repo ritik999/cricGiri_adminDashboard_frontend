@@ -1,9 +1,11 @@
-import React, { lazy, Suspense, useState } from 'react';
-import { Button, Modal, Spinner, Table } from "flowbite-react";
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, Modal, Spinner, Table, Tooltip } from "flowbite-react";
 import { useLocation } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { fetchData } from '../utils/fetchFunction';
 import LocationSelector from './LocationSelector';
+import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify components
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
 
 const Pagination = lazy(() => import('./Pagination'));
 
@@ -11,32 +13,53 @@ const DataTable = () => {
   const location = useLocation();
   const pathSplit = location.pathname?.split('/');
   const apiPath = pathSplit[pathSplit.length - 1].split('-').join('').toLowerCase();
-  
+  const [isDisabled, setIsDisabled] = useState(false); 
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
-  
+  const [rowsPerPage, setRowPerPage] = useState(10);
   const [isFilterOpen, setFilterOpen] = useState(false);
 
-  const handlePageChange = (pageNum) => {
+  const handlePageChange = useCallback((pageNum) => {
     setCurrentPage(pageNum);
-  };
+  }, []);
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
 
-  const { data: datas = [], isLoading, isError, error } = useQuery({
+  const { data: datas = [], isLoading, isError, error, refetch, isFetching, isFetched } = useQuery({
     queryKey: ['data', apiPath],
-    queryFn: () => fetchData(`/admin${location?.state || '/master/playertype'}`, 'POST'),
-    enabled: !!apiPath, // only fetch when the API path is available
-    staleTime: 5 * 60 * 1000,
+    queryFn: () => fetchData(`/admin${location?.state?.apiEndpoint || '/master/playertype'}`, 'POST', location?.state?.apiBody || {}),
+    staleTime: Infinity,
+    keepPreviousData: true,
   });
 
-  const currentRows = datas.slice(indexOfFirstRow, indexOfLastRow);
-  const totalPages = Math.ceil(datas.length / rowsPerPage);
+  const currentRows = useMemo(() => {
+    return datas.slice(indexOfFirstRow, indexOfLastRow);
+  }, [datas, currentPage, location.pathname, rowsPerPage]);
 
-  const handleFilter = () => {
-    setFilterOpen(true);
-  };
+  useEffect(() => {
+    setRowPerPage(10);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (datas && isFetching) {
+      toast.info("Refetching data...", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+      });
+    }
+  }, [isFetching]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(`Error: ${error.message}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    }
+  }, [isError, error]);
+
 
   if (isLoading) {
     return <div className="text-center"><Spinner /></div>;
@@ -53,27 +76,52 @@ const DataTable = () => {
       ) : (
         <>
           <div>
-            <img 
-              src={`/assets/filter.png`} 
-              onClick={handleFilter} 
-              className='h-8 w-8 mb-4 cursor-pointer' 
-              alt="filter icon" 
-            />
+            <div className='flex justify-between items-center'>
+              <div>
+                <p className='text-xs text-gray-500 mb-1'>Data per page</p>
+                <select
+                  onChange={(e) => setRowPerPage(e.target.value)}
+                  value={rowsPerPage}
+                  id="states"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-48 p-2.5 mb-5"
+                >
+                  {isLoading ? (
+                    <option>Loading...</option>
+                  ) : (
+                    <>
+                      <option value={10}>10</option>
+                      <option value={50}>50</option>
+                      <option value={100}>100</option>
+                    </>
+                  )}
+                </select>
+              </div>
+              <div>
+                <Tooltip content={'Click to Re-fetch data'} placement='left'>
+                  <button onClick={refetch} className='cursor-pointer' disabled={isFetching}>
+                    <img
+                      className='mr-2 hover:rotate-[360deg] transition-transform duration-500 ease-in-out'
+                      src={`/assets/sync.png`}
+                      alt="Sync"
+                    />
+                  </button>
+                </Tooltip>
+              </div>
+            </div>
             <div className='overflow-x-scroll no-scrollbar'>
               <Table className='overflow-x-scroll max-h-50 no-scrollbar border-4' striped>
                 <Table.Head className='text-white sticky top-0 z-20 bg-[#15283c]'>
                   {datas.length > 0 && datas[0] && Object.keys(datas[0]).map((key, index) => (
-                    <Table.HeadCell key={index} className='bg-[#15283c]'>
+                    <Table.HeadCell key={index} className='bg-[#15283c] text-center'>
                       {key}
                     </Table.HeadCell>
                   ))}
-                  <Table.HeadCell className='bg-[#15283c]'>Action</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
                   {currentRows.map((row) => (
                     <Table.Row key={row.id || row.Id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                       {(row.id || row.Id) && (
-                        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-center dark:text-white">
                           {row.id || row.Id}
                         </Table.Cell>
                       )}
@@ -81,21 +129,11 @@ const DataTable = () => {
                         Object.entries(row)
                           .filter(([key]) => key.toLocaleLowerCase() !== 'id')
                           .map(([key, value]) => (
-                            <Table.Cell key={key}>
-                              <input
-                                type="text"
-                                value={value}
-                                className="px-2 py-1 rounded select-none bg-transparent border-none"
-                                disabled
-                              />
+                            <Table.Cell className='text-center' key={key}>
+                              <p>{value}</p>
                             </Table.Cell>
                           ))
                       }
-                      <Table.Cell>
-                        <p className="font-medium text-cyan-600 hover:underline dark:text-cyan-500 cursor-pointer">
-                          Edit
-                        </p>
-                      </Table.Cell>
                     </Table.Row>
                   ))}
                 </Table.Body>
@@ -103,7 +141,7 @@ const DataTable = () => {
             </div>
             <div className='sticky bottom-0 bg-white mt-5 py-2 w-full'>
               <Suspense fallback={<Spinner color='info' />}>
-                <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
+                <Pagination totalPages={Math.ceil(datas.length / rowsPerPage)} currentPage={currentPage} handlePageChange={handlePageChange} />
               </Suspense>
             </div>
           </div>
@@ -123,6 +161,9 @@ const DataTable = () => {
           <Button color='green' onClick={() => setFilterOpen(false)}>Done</Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Toast Container */}
+      <ToastContainer />
     </>
   );
 };

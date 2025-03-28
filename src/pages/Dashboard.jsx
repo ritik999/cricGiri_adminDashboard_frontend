@@ -9,7 +9,10 @@ const Navbar = lazy(() => import('../components/Navbar'));
 const Dashboard = () => {
 
     const { isAuth } = useSelector(state => state.user);
-    // console.log(isAuth);
+    const path = useLocation().pathname;
+    if (isAuth && path == '/') {
+        return <Navigate to='/master/Player-Role' />
+    }
 
     return (isAuth?.loggedIn) ? (
         <>

@@ -7,14 +7,14 @@ import { MasterSubMenuDatas } from "../constants/SideBarData";
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true);
-    const path=location.pathname;
-    const newPath=path.split('/');
+    const path = location.pathname;
+    const newPath = path.split('/');
     const [active, setActive] = useState('');
 
 
-    useEffect(()=>{
+    useEffect(() => {
         setActive(newPath[1] || 'master')
-    },[path])
+    }, [path])
 
     return (
         <div
@@ -70,8 +70,10 @@ const Sidebar = () => {
                                             </>
                                         ) : (
                                             <>
-                                                <img src={`/assets/${Menu.src}.png`} loading="lazy" className="size-6" alt="image" />
-                                                <div className="w-[1px]  bg-gray-600"></div>
+                                                {/* <div className="flex"> */}
+                                                    <img src={`/assets/${Menu.src}.png`} loading="lazy" className="size-6" alt="image" />
+                                                    <div className="w-[1px] bg-gray-600 ml-4"></div>
+                                                {/* </div> */}
                                                 {
                                                     Menu?.list?.length > 0 ? (
                                                         <>
@@ -98,7 +100,7 @@ const Sidebar = () => {
 
 
                             </li>
-                            {(MasterSubMenuDatas.length-1 != index) && <div className="h-[1px] bg-gray-600" />}
+                            {(MasterSubMenuDatas.length - 1 != index) && <div className="h-[1px] bg-gray-600" />}
                         </>
                     ))}
                 </ul>

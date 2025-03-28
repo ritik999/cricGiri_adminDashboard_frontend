@@ -1,4 +1,5 @@
-export const fetchData = async (api, reqMethod, bodyData = {}) => {
+
+export const fetchData = async (api, reqMethod, bodyData = {}) => {    
     try {
         const res = await fetch(api, {
             method: reqMethod,
