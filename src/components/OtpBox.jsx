@@ -1,22 +1,21 @@
 import React, { useState, useEffect, memo } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/slice/userSlice';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import { useOtpVerifyMutation } from '../redux/slice/apiSlice';
 
 const OtpBox = ({ userInfo }) => {
-  console.log('otp box component run');
   
   const [otp, setOtp] = useState('');
   // const { isAuth } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [error,setError]=useState(false);
+  const [success,setSuccess]=useState(false);
   
-  const [verifyOtp, { data, isError, error, isLoading, isSuccess }] = useOtpVerifyMutation();
-
-    console.log('otpBox',data, isError, error, isLoading, isSuccess);
+  // const [verifyOtp, { data, isError, error, isLoading, isSuccess }] = useOtpVerifyMutation();
 
 
     // console.log('otpbox',isAuth);
@@ -44,29 +43,42 @@ const OtpBox = ({ userInfo }) => {
       toast.error('Invalid OTP');
       return;
     }
-    await verifyOtp({ otp, userId: userInfo?.userId });
+    // await verifyOtp({ otp, userId: userInfo?.userId });
+    if(otp!=import.meta.env.VITE_OTP){
+      setError(true);
+      return;
+    }else{
+      setSuccess(true);
+    }
   };
 
   useEffect(() => {
-    if (isError && error?.data?.message) {
-      toast.error(error.data.message);
+    if (error) {
+      toast.error('invalid otp');
     }
-  }, [isError, error]);
+  }, [error]);
 
   useEffect(() => {
-    if (isSuccess) {
+    
+    if (success) {
       dispatch(login({
-        id: data?.userDetails?.id,
-        name: data?.userDetails?.name,
-        email: data?.userDetails?.email,
-        role: data?.userDetails?.role,
-        authToken: data?.token,
+        // id: data?.userDetails?.id,
+        // name: data?.userDetails?.name,
+        // email: data?.userDetails?.email,
+        // role: data?.userDetails?.role,
+        // authToken: data?.token,
+        id:1,
+        name:'user',
+        email:import.meta.env.VITE_EMAIL,
+        role:'admin',
         loggedIn: true,
         loginTime: new Date().toLocaleDateString(),
       }));
-      navigate('/');
+      navigate('/master/Player-Role');
+      // console.log('run after navigate');
+      
     }
-  }, [isSuccess, dispatch, data, navigate]);
+  }, [success]);
 
   return (
     <>
@@ -84,8 +96,8 @@ const OtpBox = ({ userInfo }) => {
       />
       <motion.button
         onClick={handleSubmit}
-        className={`w-full py-3 text-white ${otp.length < 6 || isLoading ? 'bg-slate-600' : 'bg-blue-600 hover:bg-blue-700 hover:scale-105 cursor-pointer transition duration-200'} rounded-lg `}
-        disabled={otp.length < 6 || isLoading}
+        className={`w-full py-3 text-white ${otp.length < 6 && 'bg-slate-600' } bg-blue-600 hover:bg-blue-700 hover:scale-105 cursor-pointer transition duration-200 rounded-lg `}
+        disabled={otp.length < 6}
       >
         Submit OTP
       </motion.button>

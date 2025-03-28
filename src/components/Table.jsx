@@ -1,141 +1,154 @@
-import React, { lazy, Suspense, useCallback, useEffect, useState } from 'react';
-import { Button, Modal, Spinner, Table } from "flowbite-react";
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, Modal, Spinner, Table, Tooltip } from "flowbite-react";
+import { useLocation } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
+import { fetchData } from '../utils/fetchFunction';
 import LocationSelector from './LocationSelector';
-// import { useGetCountriesQuery } from '../redux/slice/apiSlice';
+import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify components
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
 
 const Pagination = lazy(() => import('./Pagination'));
 
-
 const DataTable = () => {
-  const [datas, setData] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Pending' },
-    { id: 2, name: 'Jane Doe', email: 'jane@example.com', status: 'Rejected' },
-    { id: 3, name: 'Bob Smith', email: 'bob@example.com', status: 'Success' },
-    { id: 4, name: 'John Doe', email: 'john@example.com', status: 'Pending' },
-    { id: 5, name: 'Jane Doe', email: 'jane@example.com', status: 'Pending' },
-    { id: 6, name: 'Bob Smith', email: 'bob@example.com', status: 'Success' },
-    { id: 8, name: 'John Doe', email: 'john@example.com', status: 'Success' },
-    { id: 9, name: 'Jane Doe', email: 'jane@example.com', status: 'Rejected' },
-    { id: 10, name: 'Bob Smith', email: 'bob@example.com', status: 'Pending' },
-    { id: 11, name: 'John Doe', email: 'john@example.com', status: 'Success' },
-    { id: 13, name: 'Bob Smith', email: 'bob@example.com', status: 'Success' },
-    { id: 14, name: 'Jane Doe', email: 'jane@example.com', status: 'Pending' },
-    { id: 15, name: 'Bob Smith', email: 'bob@example.com', status: 'Pending' },
-  ]);
-
+  const location = useLocation();
+  const pathSplit = location.pathname?.split('/');
+  const apiPath = pathSplit[pathSplit.length - 1].split('-').join('').toLowerCase();
+  const [isDisabled, setIsDisabled] = useState(false); 
   const [currentPage, setCurrentPage] = useState(1);
-  const [isEditable, setIsEditable] = useState(null);
+  const [rowsPerPage, setRowPerPage] = useState(10);
   const [isFilterOpen, setFilterOpen] = useState(false);
-  const rowsPerPage = 10;
-
-  // const [countries,{ data, isError, error, isLoading, isSuccess }]=useGetCountriesQuery();
-  // console.log(data);
-
-
- 
-
-  const handleInputChange = (e, id, field) => {
-    const updatedData = datas.map((row) => {
-      if (row.id === id) {
-        return { ...row, [field]: e.target.value };
-      }
-      return row;
-    });
-    setData(updatedData);
-  };
-
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = datas.slice(indexOfFirstRow, indexOfLastRow);
-
-  const totalPages = Math.ceil(datas.length / rowsPerPage);
 
   const handlePageChange = useCallback((pageNum) => {
-
-    console.log(currentPage);
-    console.log(pageNum);
     setCurrentPage(pageNum);
   }, []);
 
-  const handleFilter=async()=>{
-    setFilterOpen(true)
-    await countries();
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+
+  const { data: datas = [], isLoading, isError, error, refetch, isFetching, isFetched } = useQuery({
+    queryKey: ['data', apiPath],
+    queryFn: () => fetchData(`/admin${location?.state?.apiEndpoint || '/master/playertype'}`, 'POST', location?.state?.apiBody || {}),
+    staleTime: Infinity,
+    keepPreviousData: true,
+  });
+
+  const currentRows = useMemo(() => {
+    return datas.slice(indexOfFirstRow, indexOfLastRow);
+  }, [datas, currentPage, location.pathname, rowsPerPage]);
+
+  useEffect(() => {
+    setRowPerPage(10);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (datas && isFetching) {
+      toast.info("Refetching data...", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+      });
+    }
+  }, [isFetching]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(`Error: ${error.message}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
+    }
+  }, [isError, error]);
+
+
+  if (isLoading) {
+    return <div className="text-center"><Spinner /></div>;
   }
 
+  if (isError) {
+    return <div className="text-center text-red-500">{`Error: ${error.message}`}</div>;
+  }
 
   return (
     <>
-      <div className="">
-        {/* <LocationSelector /> */}
-        <img src={`./src/assets/filter.png`} onClick={handleFilter} className='h-8 w-8 mb-4 cursor-pointer' loading="lazy" alt="image" />
-        <Table className='overflow-x-auto max-h-50 no-scrollbar border-4' striped>
-          <Table.Head className='text-white sticky top-0 z-20 bg-[#15283c]'>
-            <Table.HeadCell className='bg-[#15283c]'>ID</Table.HeadCell>
-            <Table.HeadCell className='bg-[#15283c]'>Name</Table.HeadCell>
-            <Table.HeadCell className='bg-[#15283c]'>Email</Table.HeadCell>
-            <Table.HeadCell className='bg-[#15283c]'>Action</Table.HeadCell>
-            <Table.HeadCell className='bg-[#15283c]'>Status</Table.HeadCell>
-          </Table.Head>
-          <Table.Body className="divide-y">
-            {
-              currentRows.map((row) => (
-                <Table.Row key={row.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                    {row.id}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <input
-                      type="text"
-                      value={row.name}
-                      onChange={(e) => handleInputChange(e, row.id, 'name')}
-                      className={`${isEditable === row.id ? 'border' : 'border-none'} px-2 py-1 rounded select-none bg-transparent`}
-                      disabled={isEditable !== row.id}
+      {datas.length === 0 ? (
+        <h1 className='text-center font-bold'>No Data available to Show</h1>
+      ) : (
+        <>
+          <div>
+            <div className='flex justify-between items-center'>
+              <div>
+                <p className='text-xs text-gray-500 mb-1'>Data per page</p>
+                <select
+                  onChange={(e) => setRowPerPage(e.target.value)}
+                  value={rowsPerPage}
+                  id="states"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-48 p-2.5 mb-5"
+                >
+                  {isLoading ? (
+                    <option>Loading...</option>
+                  ) : (
+                    <>
+                      <option value={10}>10</option>
+                      <option value={50}>50</option>
+                      <option value={100}>100</option>
+                    </>
+                  )}
+                </select>
+              </div>
+              <div>
+                <Tooltip content={'Click to Re-fetch data'} placement='left'>
+                  <button onClick={refetch} className='cursor-pointer' disabled={isFetching}>
+                    <img
+                      className='mr-2 hover:rotate-[360deg] transition-transform duration-500 ease-in-out'
+                      src={`/assets/sync.png`}
+                      alt="Sync"
                     />
-                  </Table.Cell>
-                  <Table.Cell>
-                    <input
-                      type="text"
-                      value={row.email}
-                      onChange={(e) => handleInputChange(e, row.id, 'email')}
-                      className={`${isEditable === row.id ? 'border' : 'border-none'} px-2 py-1 rounded select-none bg-transparent`}
-                      disabled={isEditable !== row.id}
-                    />
-                  </Table.Cell>
-                  <Table.Cell>
-                    {
-                      isEditable === row.id ? (
-                        <div className='flex gap-5'>
-                          <p onClick={() => setIsEditable(null)} className="font-medium text-green-600 hover:underline dark:text-green-500 cursor-pointer">
-                            Confirm
-                          </p>
-                          <p onClick={() => setIsEditable(null)} className="font-medium text-red-600 hover:underline dark:text-red-500 cursor-pointer">
-                            Cancel
-                          </p>
-                        </div>
-                      ) : (
-                        <p onClick={() => setIsEditable(row.id)} className="font-medium text-cyan-600 hover:underline dark:text-cyan-500 cursor-pointer">
-                          Edit
-                        </p>
-                      )
-                    }
-                  </Table.Cell>
-                  <Table.Cell>
-                    <p className={`p-2 ${row.status === 'Rejected' ? 'bg-red-300' : (row.status === 'Pending' ? 'bg-slate-300' : 'bg-green-300')} backdrop-blur-md rounded-md text-center font-semibold text-black/80`}>
-                      {row.status}
-                    </p>
-                  </Table.Cell>
-                </Table.Row>
-              ))
-            }
-          </Table.Body>
-        </Table>
-        <div className='sticky bottom-0 bg-[#fafafb] mt-5 py-2'>
-          <Suspense fallback={<Spinner color='info' />}>
-            <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
-          </Suspense>
-        </div>
-      </div>
+                  </button>
+                </Tooltip>
+              </div>
+            </div>
+            <div className='overflow-x-scroll no-scrollbar'>
+              <Table className='overflow-x-scroll max-h-50 no-scrollbar border-4' striped>
+                <Table.Head className='text-white sticky top-0 z-20 bg-[#15283c]'>
+                  {datas.length > 0 && datas[0] && Object.keys(datas[0]).map((key, index) => (
+                    <Table.HeadCell key={index} className='bg-[#15283c] text-center'>
+                      {key}
+                    </Table.HeadCell>
+                  ))}
+                </Table.Head>
+                <Table.Body className="divide-y">
+                  {currentRows.map((row) => (
+                    <Table.Row key={row.id || row.Id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                      {(row.id || row.Id) && (
+                        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-center dark:text-white">
+                          {row.id || row.Id}
+                        </Table.Cell>
+                      )}
+                      {
+                        Object.entries(row)
+                          .filter(([key]) => key.toLocaleLowerCase() !== 'id')
+                          .map(([key, value]) => (
+                            <Table.Cell className='text-center' key={key}>
+                              <p>{value}</p>
+                            </Table.Cell>
+                          ))
+                      }
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            </div>
+            <div className='sticky bottom-0 bg-white mt-5 py-2 w-full'>
+              <Suspense fallback={<Spinner color='info' />}>
+                <Pagination totalPages={Math.ceil(datas.length / rowsPerPage)} currentPage={currentPage} handlePageChange={handlePageChange} />
+              </Suspense>
+            </div>
+          </div>
+        </>
+      )}
 
+      {/* Filter Modal */}
       <Modal show={isFilterOpen} onClose={() => setFilterOpen(false)}>
         <Modal.Header>Filter</Modal.Header>
         <Modal.Body>
@@ -148,9 +161,11 @@ const DataTable = () => {
           <Button color='green' onClick={() => setFilterOpen(false)}>Done</Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Toast Container */}
+      <ToastContainer />
     </>
   );
 };
 
 export default DataTable;
-

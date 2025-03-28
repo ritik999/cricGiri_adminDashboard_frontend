@@ -10,8 +10,8 @@ const Navbar = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const userData = useSelector(state => state.user.isAuth);
-    const [trigger, { isLoading, isSuccess, isError, error }] = useLazyUserLogoutQuery();
-    
+    // const [trigger, { isLoading, isSuccess, isError, error }] = useLazyUserLogoutQuery();
+
     useEffect(() => {
         if (!userData?.loggedIn) {
             navigate('/login');
@@ -19,18 +19,18 @@ const Navbar = () => {
     }, [userData?.loggedIn, navigate]);
 
 
-    useEffect(() => {
-        if (isSuccess) {
-            localStorage.removeItem('isAuth');
-            dispatch(logout());
-            navigate('/login');
-        }
+    // useEffect(() => {
+    //     if (isSuccess) {
+    //         localStorage.removeItem('isAuth');
+    //         dispatch(logout());
+    //         navigate('/login');
+    //     }
 
-        if (isError && error?.data?.message) {
-            console.error('Logout failed');
-            toast.error(error?.data?.message);
-        }
-    }, [isSuccess, isError, dispatch, navigate]);
+    //     if (isError && error?.data?.message) {
+    //         console.error('Logout failed');
+    //         toast.error(error?.data?.message);
+    //     }
+    // }, [isSuccess, isError, dispatch, navigate]);
 
     return (
         <div className='h-12 bg-[#15283c] flex justify-between items-center p-8 gap-10'>
@@ -47,21 +47,25 @@ const Navbar = () => {
                     </Dropdown.Header>
                     <Dropdown.Item>
                         <div className='flex items-center gap-2' onClick={() => navigate('/profile')}>
-                            <img src='./src/assets/userProfile.png' className='w-5 h-5' />
+                            <img src='/assets/userProfile.png' className='w-5 h-5' />
                             <span className='ml-2'>Profile</span>
                         </div>
                     </Dropdown.Item>
                     <Dropdown.Item>
                         <div className='flex items-center gap-2'>
-                            <img src='./src/assets/clock.png' className='w-5 h-5' />
+                            <img src='/assets/clock.png' className='w-5 h-5' />
                             <span className='ml-2'>{userData.loginTime}</span>
                         </div>
                     </Dropdown.Item>
                     <Dropdown.Divider />
                     <Dropdown.Item>
-                        <div className='flex items-center gap-2' onClick={() => trigger(userData?.authToken)}>
-                            <img src='./src/assets/logout.png' className='w-5 h-5' />
-                            <span className='ml-2'>{isLoading ? 'Logging out...' : 'Logout'}</span>
+                        <div className='flex items-center gap-2' onClick={() => {
+                            localStorage.removeItem('isAuth');
+                            dispatch(logout());
+                            navigate('/login');
+                        }}>
+                            <img src='/assets/logout.png' className='w-5 h-5' />
+                            <span className='ml-2'>Logout</span>
                         </div>
                     </Dropdown.Item>
                 </Dropdown>

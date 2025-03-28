@@ -7,7 +7,14 @@ export default {
     flowbite.content(),
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors:{
+        'sidebar-head':'#214162',
+        'sidebar-body':'#15283c',
+        'sidebar-foot':'#db4d21fb',
+        'main-container':'#fafafb'
+      }
+    },
   },
   plugins: [
     flowbite.plugin(),

@@ -12,40 +12,34 @@ import { useUserLoginMutation } from '../redux/slice/apiSlice';
 
 const Login = () => {
   const [showOtpBox, setShowOtpBox] = useState(false);
+  const [error,setError]=useState(false);
+  const [isSuccess,setIsSuccess]=useState(false);
   const { isAuth } = useSelector(state => state.user);
   const navigate = useNavigate();
 
-  console.log(isAuth);
+  
 
   // const isLoggedIn=useMemo(()=>isAuth?.loggedIn,[isAuth?.loggedIn]);
   // console.log(isLoggedIn);
   
   
-  const [loginData, { data, isError, error, isLoading, isSuccess }] = useUserLoginMutation();
+  // const [loginData, { data, isError, error, isLoading, isSuccess }] = useUserLoginMutation();
 
-  console.log(data, isError, error, isLoading, isSuccess);
-
-  console.log('login page');
-  
-  console.log('before route');
   
   useEffect(() => {
-    console.log('login useeffect navigate run');
     
     if (isAuth?.loggedIn) {
-      navigate('/');
+      navigate('/master/Player-Role');
     }
   }, [isAuth?.loggedIn, navigate]);
 
-  console.log('after route');
 
   useEffect(() => {
-    console.log('error check useEffect');
     
-    if (isError && error?.data?.message) {
-      toast.error(error.data.message);
+    if (error) {
+      toast.error('something went wrong');
     }
-  }, [isError, error]);
+  }, [error]);
 
   const validationSchema = useMemo(() => Yup.object({
     email: Yup.string().email('Invalid email format').required('Email is required'),
@@ -56,7 +50,14 @@ const Login = () => {
     initialValues: { email: '', password: '' },
     validationSchema,
     onSubmit: async (values) => {
-      await loginData({ email: values.email, password: values.password });
+      // await loginData({ email: values.email, password: values.password });
+      if(values.email!=import.meta.env.VITE_EMAIL || values.password!=import.meta.env.VITE_PASSWORD){
+        setError(true);
+        // return;
+      }else{
+        setIsSuccess(true);
+        // return;
+      }
     },
   });
 
@@ -67,7 +68,7 @@ const Login = () => {
   }, [isSuccess]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[url('./src/assets/login-bg.jpg')] bg-cover bg-center">
+    <div className="flex items-center justify-center min-h-screen bg-[url('/assets/login-bg.jpg')] bg-cover bg-center">
       <motion.div
         className="bg-white bg-opacity-55 backdrop-blur-none p-8 rounded-lg shadow-lg w-full max-w-md"
         initial={{ opacity: 0, y: -50 }}
@@ -75,7 +76,7 @@ const Login = () => {
         transition={{ duration: 0.5 }}
       >
         {showOtpBox ? (
-          <OtpBox userInfo={data?.userInfo} />
+          <OtpBox />
         ) : (
           <>
             <div className='flex flex-col items-center my-7'>
@@ -141,13 +142,14 @@ const Login = () => {
 
               <motion.button
                 type="submit"
-                className={`w-full ${isLoading ? 'bg-gray-600' : 'bg-blue-800 hover:bg-blue-700'} text-white py-3 rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-700`}
+                className={`w-full bg-blue-800 hover:bg-blue-700 text-white py-3 rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-700`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
-                disabled={isLoading}
+                // disabled={isLoading}
               >
-                {isLoading ? 'Logging in...' : 'Log In'}
+                {/* {isLoading ? 'Logging in...' : 'Log In'} */}
+                Log In
               </motion.button>
 
               <div className="mt-4 text-center">
