@@ -12,10 +12,6 @@ const Teams = () => {
   const [teamId, setTeamId] = useState(null);
   const [playerListError, setPlayerListError] = useState("");
 
-  const formatString = (val) => {
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-  };
-
   const handleSearchCodeChange = async (e) => {
     const value = e.target.value;
     const numValue = Number(value);
@@ -85,7 +81,7 @@ const Teams = () => {
   return (
     <div>
       <div className="flex flex-col">
-        <label htmlFor="team_code" className="font-bold font-mono">
+        <label htmlFor="team_code" className="font-bold font-mono ">
           Search Team
         </label>
         <input
@@ -148,10 +144,10 @@ const Teams = () => {
           <div className="mt-5 p-4 border rounded flex  justify-between ">
             <div className="font-mono flex flex-col gap-5">
               <h2 className="font-bold text-cyan-700">Team Information</h2>
-              <p>
-                <strong>Name:</strong> {formatString(teamData?.name) || ""}
+              <p className="capitallize">
+                <strong>Name:</strong> {teamData?.name || ""}
               </p>
-              <p>
+              <p className="capitallize">
                 <strong>City:</strong> {teamData?.cityName || ""}
               </p>
             </div>

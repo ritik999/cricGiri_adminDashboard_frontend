@@ -52,6 +52,7 @@ const UserImageUpdater = () => {
     const value = e.target.value;
     const numValue = Number(value);
     if (isNaN(numValue) || value.trim() === "") {
+      setErrorMessage("");
       setIsValid(false);
       // console.log(isValid);
       return;
