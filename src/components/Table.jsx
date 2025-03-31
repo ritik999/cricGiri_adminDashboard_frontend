@@ -4,8 +4,8 @@ import { useLocation } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { fetchData } from '../utils/fetchFunction';
 import LocationSelector from './LocationSelector';
-import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify components
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Pagination = lazy(() => import('./Pagination'));
 
@@ -54,7 +54,7 @@ const DataTable = () => {
     if (isError) {
       toast.error(`Error: ${error.message}`, {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
         hideProgressBar: true,
       });
     }
@@ -162,7 +162,6 @@ const DataTable = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Toast Container */}
       <ToastContainer />
     </>
   );

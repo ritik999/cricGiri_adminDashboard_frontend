@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Spinner, Table } from 'flowbite-react';
+import { Spinner, Table, Tooltip } from 'flowbite-react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchData } from '../utils/fetchFunction';
 import Pagination from '../components/Pagination';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Tournament = () => {
     // const [locationId, setLocationId] = useState(234);
@@ -25,7 +27,7 @@ const Tournament = () => {
     //     }
     // };
 
-    const { data, isLoading, isError, error, refetch } = useQuery({
+    const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
         queryKey: ['tournaments'],
         queryFn: () => fetchData('/admin/tournaments/local-tournaments-by-location', 'POST', { user_location_id: 234 }),
         staleTime: Infinity,  // Cache data indefinitely (adjust as needed)
@@ -40,7 +42,7 @@ const Tournament = () => {
         setCurrentPage(pageNum);
     }, []);
 
-    const currentRows = useMemo(() => {        
+    const currentRows = useMemo(() => {
         return data?.slice(indexOfFirstRow, indexOfLastRow)
     }, [data, currentPage, location.pathname, rowsPerPage])
 
@@ -48,13 +50,34 @@ const Tournament = () => {
         setRowPerPage(10);
     }, [location.pathname])
 
+    useEffect(() => {
+        if (data && isFetching) {
+            toast.info("Refetching data...", {
+                position: "top-right",
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+        }
+    }, [isFetching]);
+
+    useEffect(() => {
+        if (isError) {
+            toast.error(`Error: ${error.message}`, {
+                position: "top-right",
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+        }
+    }, [isError, error]);
+
     if (isError) {
         console.log(error.message);
     }
 
     return (
-        <div>
-            {/* <div className="flex gap-4 mb-10">
+        <>
+            <div>
+                {/* <div className="flex gap-4 mb-10">
                 <input
                     onChange={handleInputChange}
                     value={locationId}
@@ -71,37 +94,40 @@ const Tournament = () => {
                 </button>
             </div> */}
 
-<div className='flex justify-between items-center'>
-              <div>
-                <p className='text-xs text-gray-500 mb-1'>Data per page</p>
-                <select
-                  onChange={(e) => setRowPerPage(e.target.value)}
-                  value={rowsPerPage}
-                  id="states"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-48 p-2.5 mb-5"
-                >
-                  {isLoading ? (
-                    <option>Loading...</option>
-                  ) : (
-                    <>
-                      <option value={10}>10</option>
-                      <option value={50}>50</option>
-                      <option value={100}>100</option>
-                    </>
-                  )}
-                </select>
-              </div>
-              <div>
-                <img
-                  className='mr-2 cursor-pointer hover:rotate-[360deg] transition-transform duration-500 ease-in-out'
-                  src={`/assets/sync.png`}
-                  alt="Sync"
-                  onClick={refetch}
-                />
-              </div>
-            </div>
+                <div className='flex justify-between items-center'>
+                    <div>
+                        <p className='text-xs text-gray-500 mb-1'>Data per page</p>
+                        <select
+                            onChange={(e) => setRowPerPage(e.target.value)}
+                            value={rowsPerPage}
+                            id="states"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-48 p-2.5 mb-5"
+                        >
+                            {isLoading ? (
+                                <option>Loading...</option>
+                            ) : (
+                                <>
+                                    <option value={10}>10</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
+                                </>
+                            )}
+                        </select>
+                    </div>
+                    <div>
+                        <Tooltip content={'Click to Re-fetch data'} placement='left'>
+                            <button onClick={refetch} className='cursor-pointer' disabled={isFetching}>
+                                <img
+                                    className='mr-2 hover:rotate-[360deg] transition-transform duration-500 ease-in-out'
+                                    src={`/assets/sync.png`}
+                                    alt="Sync"
+                                />
+                            </button>
+                        </Tooltip>
+                    </div>
+                </div>
 
-            {/* <p className='text-xs text-gray-500 mb-1'>Data per page</p>
+                {/* <p className='text-xs text-gray-500 mb-1'>Data per page</p>
             <select
                 onChange={(e) => setRowPerPage(e.target.value)}
                 value={rowsPerPage}
@@ -119,67 +145,69 @@ const Tournament = () => {
                 )}
             </select> */}
 
-            <div>
-                {isLoading ? (
-                    <div className="text-center">
-                        <Spinner />
-                    </div>
-                ) : isError ? (
-                    <h1 className="text-center text-red-500 font-bold">Error fetching data</h1>
-                ) : data?.length === 0 ? (
-                    <h1 className="text-center font-bold">No Data available to Show</h1>
-                ) : (
-                    <>
-                        <div>
-                            <div className="overflow-x-scroll no-scrollbar">
-                                <Table className="overflow-x-scroll max-h-50 no-scrollbar border-4" striped>
-                                    <Table.Head className="text-white sticky top-0 z-20 bg-[#15283c]">
-                                        {data[0] &&
-                                            Object.keys(data[0])
-                                                .filter((key) => [
-                                                    'Id', 'Title', 'StartDate', 'EndDate', 'CategoryName', 'BallTypeName', 'PitchTypeName', 'MatchTypeName',
-                                                    'CityName', 'StadiumName', 'OrganiserName', 'OrganiserPhone', 'currentStatusName', 'noOfMatchs',
-                                                ].includes(key))
-                                                .map((key, index) => (
-                                                    <Table.HeadCell key={index} className="bg-[#15283c]">
-                                                        {key}
-                                                    </Table.HeadCell>
-                                                ))}
-                                    </Table.Head>
-                                    <Table.Body className="divide-y">
-                                        {currentRows.map((row, index) => (
-                                            <Table.Row key={row.id || row.Id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                                    {index + 1}
-                                                </Table.Cell>
-                                                {Object.entries(row)
-                                                    .filter(([key]) =>
-                                                        ['Title', 'StartDate', 'EndDate', 'CategoryName', 'BallTypeName', 'PitchTypeName', 'MatchTypeName', 'CityName', 'StadiumName', 'OrganiserName', 'OrganiserPhone', 'currentStatusName', 'noOfMatchs']
-                                                            .includes(key)
-                                                    )
-                                                    .map(([key, value]) => (
-                                                        <Table.Cell key={key}>
-                                                            <input
-                                                                type="text"
-                                                                value={value}
-                                                                className="px-2 py-1 rounded select-none bg-transparent border-none"
-                                                                disabled
-                                                            />
-                                                        </Table.Cell>
-                                                    ))}
-                                            </Table.Row>
-                                        ))}
-                                    </Table.Body>
-                                </Table>
-                            </div>
-                            <div className="sticky bottom-0 mt-5 bg-white py-2 w-full">
-                                <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
-                            </div>
+                <div>
+                    {isLoading ? (
+                        <div className="text-center">
+                            <Spinner />
                         </div>
-                    </>
-                )}
+                    ) : isError ? (
+                        <h1 className="text-center text-red-500 font-bold">Error fetching data</h1>
+                    ) : data?.length === 0 ? (
+                        <h1 className="text-center font-bold">No Data available to Show</h1>
+                    ) : (
+                        <>
+                            <div>
+                                <div className="overflow-x-scroll no-scrollbar">
+                                    <Table className="overflow-x-scroll max-h-50 no-scrollbar border-4" striped>
+                                        <Table.Head className="text-white sticky top-0 z-20 bg-[#15283c]">
+                                            {data[0] &&
+                                                Object.keys(data[0])
+                                                    .filter((key) => [
+                                                        'Id', 'Title', 'StartDate', 'EndDate', 'CategoryName', 'BallTypeName', 'PitchTypeName', 'MatchTypeName',
+                                                        'CityName', 'StadiumName', 'OrganiserName', 'OrganiserPhone', 'currentStatusName', 'noOfMatchs',
+                                                    ].includes(key))
+                                                    .map((key, index) => (
+                                                        <Table.HeadCell key={index} className="bg-[#15283c]">
+                                                            {key}
+                                                        </Table.HeadCell>
+                                                    ))}
+                                        </Table.Head>
+                                        <Table.Body className="divide-y">
+                                            {currentRows.map((row, index) => (
+                                                <Table.Row key={row.id || row.Id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                                        {index + 1}
+                                                    </Table.Cell>
+                                                    {Object.entries(row)
+                                                        .filter(([key]) =>
+                                                            ['Title', 'StartDate', 'EndDate', 'CategoryName', 'BallTypeName', 'PitchTypeName', 'MatchTypeName', 'CityName', 'StadiumName', 'OrganiserName', 'OrganiserPhone', 'currentStatusName', 'noOfMatchs']
+                                                                .includes(key)
+                                                        )
+                                                        .map(([key, value]) => (
+                                                            <Table.Cell key={key}>
+                                                                <input
+                                                                    type="text"
+                                                                    value={value}
+                                                                    className="px-2 py-1 rounded select-none bg-transparent border-none"
+                                                                    disabled
+                                                                />
+                                                            </Table.Cell>
+                                                        ))}
+                                                </Table.Row>
+                                            ))}
+                                        </Table.Body>
+                                    </Table>
+                                </div>
+                                <div className="sticky bottom-0 mt-5 bg-white py-2 w-full">
+                                    <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
             </div>
-        </div>
+            <ToastContainer />
+        </>
     );
 };
 
