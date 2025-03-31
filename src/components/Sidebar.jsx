@@ -91,7 +91,7 @@ const Sidebar = () => {
                         className="size-6"
                         alt="image"
                       />
-                      <div className="w-[1px] bg-gray-600 ml-4"></div>
+                      <div className="w-[1px] bg-gray-600 ml-4 max-h-6"></div>
                       {/* </div> */}
                       {Menu?.list?.length > 0 ? (
                         <>
