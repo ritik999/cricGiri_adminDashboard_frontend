@@ -72,7 +72,7 @@ const Sidebar = () => {
                                             <>
                                                 {/* <div className="flex"> */}
                                                     <img src={`/assets/${Menu.src}.png`} loading="lazy" className="size-6" alt="image" />
-                                                    <div className="w-[1px] max-h-10 bg-gray-600 ml-4"></div>
+                                                    <div className="w-[1px] max-h-6 bg-gray-600 ml-4"></div>
                                                 {/* </div> */}
                                                 {
                                                     Menu?.list?.length > 0 ? (
