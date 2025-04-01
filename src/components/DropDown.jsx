@@ -39,7 +39,7 @@ const DropDown = ({ title, children }) => {
         <img
           src={`/assets/down-arrow.png`}
           loading="lazy"
-          className="size-4 invert self-start"
+          className="size-4  self-start "
           alt="image"
         />
       </div>
@@ -63,13 +63,13 @@ const DropDown = ({ title, children }) => {
                       subTitle.apiBody
                     )
                   }
-                  className={`py-2 px-6 mb-1 hover:bg-orange-400 rounded-lg ${
+                  className={`py-2 px-6 my-1 hover:bg-sidebar-head-small rounded-lg font-semibold ${
                     subTitle.title == (activePath || "Player Role")
-                      ? "bg-orange-400 text-black"
+                      ? "bg-sidebar-head-small text-white"
                       : ""
                   }`}
                 >
-                  <h1>{subTitle.title}</h1>
+                  <h1 className="hover:text-white">{subTitle.title}</h1>
                 </div>
                 {children.length - 1 != index && (
                   <div className="h-[1px] bg-gray-600" />
