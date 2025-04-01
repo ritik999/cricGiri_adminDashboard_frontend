@@ -3,13 +3,13 @@ export const MasterSubMenuDatas = [
     title: "User",
     src: "User",
     apiEndpoint: null,
-    list: [{ title: "Profiles", mainPage: "Users", apiEndpoint: null }],
+    list: [{ title: "Profiles", mainPage: "user", apiEndpoint: null }],
   },
   {
     title: "Team",
     src: "team",
     apiEndpoint: null,
-    list: [{ title: "Team Info", mainPage: "teams", apiEndpoint: null }],
+    list: [{ title: "Team Info", mainPage: "team", apiEndpoint: null }],
   },
   {
     title: "Tournament",

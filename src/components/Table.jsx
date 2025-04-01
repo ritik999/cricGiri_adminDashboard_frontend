@@ -126,7 +126,7 @@ const DataTable = () => {
                 </select>
               </div>
               <div>
-                <Tooltip content={"Click to Re-fetch data"} placement="left">
+                <Tooltip content={"Click to sync data"} placement="left">
                   <button
                     onClick={refetch}
                     className="cursor-pointer"
@@ -143,14 +143,14 @@ const DataTable = () => {
             </div>
             <div className="overflow-x-scroll no-scrollbar">
               <Table
-                className="overflow-x-scroll max-h-50 no-scrollbar border-4 text-center "
+                className="overflow-x-scroll max-h-50 no-scrollbar border-4 text-center"
                 striped
               >
-                <Table.Head className="text-white sticky top-0 z-20 bg-[#15283c]">
+                <Table.Head className="text-white sticky top-0 z-20 bg-sidebar-body">
                   {datas.length > 0 &&
                     datas[0] &&
                     Object.keys(datas[0]).map((key, index) => (
-                      <Table.HeadCell key={index} className="bg-[#15283c] ">
+                      <Table.HeadCell key={index} className="bg-sidebar-body">
                         {key}
                       </Table.HeadCell>
                     ))}
@@ -177,7 +177,7 @@ const DataTable = () => {
                                   import.meta.env?.VITE_BASE_URL
                                 }${value}`}
                                 alt={`icon`}
-                                className="h-16 w-16"
+                                className="h-16 w-16 mx-auto"
                               />
                             ) : (
                               <p>{formatString(value)}</p>

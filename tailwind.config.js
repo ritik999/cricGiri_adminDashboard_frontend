@@ -8,6 +8,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Poppins', 'Arial', 'sans-serif'],
+        serif: ['Georgia', 'serif'],
+      },
       colors:{
         'sidebar-head':'#214162',
         'sidebar-body':'#15283c',

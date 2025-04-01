@@ -33,10 +33,10 @@ const Navbar = () => {
     // }, [isSuccess, isError, dispatch, navigate]);
 
     return (
-        <div className='h-12 bg-[#15283c] flex justify-between items-center p-8 gap-10'>
+        <div className='h-12 bg-sidebar-body flex justify-between items-center p-8 gap-10'>
             <div className='flex-1 cursor-pointer'>
                 <h1 className='text-white font-bold text-2xl tracking-wider'>
-                    Cric<span className='text-orange-500'>Giri</span>
+                    Cric<span className='text-sidebar-foot'>Giri</span>
                 </h1>
             </div>
             <div>

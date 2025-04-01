@@ -11,7 +11,6 @@ const UserImageUpdater = () => {
   const [isValid, setIsValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [fileError, setFileError] = useState("");
-  let token = "";
 
   useEffect(() => {
     if (profileCode == "") setIsValid(true);
@@ -25,21 +24,15 @@ const UserImageUpdater = () => {
         {
           profilecode: profileCode,
         },
-        (token = import.meta.env?.VITE_TOKEN)
+        import.meta.env.VITE_TOKEN
       ),
     onSuccess: (data) => {
-      // console.log(data);
       if (data.hasOwnProperty("status") && data.status == 0) {
         setUserData(null);
         setErrorMessage(`User with code "${profileCode}" not found.`);
       } else {
         setUserData(data);
       }
-      // if (Object.keys(data).length > 2) setUserData(data);
-
-      // if (data.hasOwnProperty("result")) setUserData(data);
-
-      // console.log("here", Object.keys(data).length);
     },
     onError: (error) => {
       setUserData(null);

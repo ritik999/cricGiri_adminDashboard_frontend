@@ -11,9 +11,10 @@ const DropDown = ({ title, children }) => {
     return newPath[newPath.length - 1].replace("-", " ");
   }, [path]);
 
+  
+  
   const handleNavigation = (index, route, apiEndpoint, apiBody) => {
-    console.log("run handleNavigate");
-
+    
     navigate(route, { state: { apiEndpoint, apiBody } });
   };
 
@@ -51,6 +52,7 @@ const DropDown = ({ title, children }) => {
               " ",
               "-"
             )}`; // Assuming you want to use the subTitle as part of the URL
+            
             return (
               <>
                 <div

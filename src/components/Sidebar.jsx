@@ -31,7 +31,7 @@ const Sidebar = () => {
       />
       <div
         className={`flex px-5 gap-x-4 items-center w-full h-20 ${
-          !open ? "bg-[#db4d21fb]" : "bg-[#214162]"
+          !open ? "bg-sidebar-foot" : "bg-sidebar-head"
         }`}
       >
         <img
@@ -121,7 +121,7 @@ const Sidebar = () => {
           ))}
         </ul>
       </div>
-      <div className="bg-[#db4d21fb] w-full h-12 rounded-t-xl self-end flex items-center pl-5 gap-5 cursor-pointer">
+      <div className="bg-sidebar-foot w-full h-12 rounded-t-xl self-end flex items-center pl-5 gap-5 cursor-pointer">
         <img
           src="/assets/logout.png"
           loading="lazy"
