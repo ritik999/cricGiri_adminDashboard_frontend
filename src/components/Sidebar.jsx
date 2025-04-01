@@ -101,8 +101,7 @@ const Sidebar = () => {
                         className="size-6"
                         alt="image"
                       />
-
-                      <div className="w-[1px] max-h-6 bg-gray-600 ml-2"></div>
+                      <div className="w-[1px] bg-gray-600 ml-4 max-h-6"></div>
                       {/* </div> */}
                       {Menu?.list?.length > 0 ? (
                         <>
@@ -133,7 +132,7 @@ const Sidebar = () => {
         </ul>
       </div>
       <div
-        className="bg-sidebar-head w-full h-12 rounded-t-xl self-end flex items-center pl-5 gap-5 cursor-pointer"
+        className="bg-sidebar-head w-full h-11 rounded-tr-2xl self-end flex items-center pl-5 gap-5 cursor-pointer"
         onClick={() => {
           localStorage.removeItem("isAuth");
           dispatch(logout());

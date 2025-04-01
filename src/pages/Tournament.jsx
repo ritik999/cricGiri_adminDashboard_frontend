@@ -171,7 +171,7 @@ const Tournament = () => {
                     className="overflow-x-scroll max-h-50 no-scrollbar border-4"
                     striped
                   >
-                    <Table.Head className="text-white sticky top-0 z-20 bg-[#15283c]">
+                    <Table.Head className="text-white sticky top-0 z-20 l">
                       {data[0] &&
                         Object.keys(data[0])
                           .filter((key) =>
@@ -195,7 +195,7 @@ const Tournament = () => {
                           .map((key, index) => (
                             <Table.HeadCell
                               key={index}
-                              className="bg-[#15283c]"
+                              className="bg-sidebar-head-small"
                             >
                               {key}
                             </Table.HeadCell>
