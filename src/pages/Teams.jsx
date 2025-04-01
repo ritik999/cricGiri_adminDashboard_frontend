@@ -82,46 +82,47 @@ const Teams = () => {
     <div>
       <div className="flex flex-col">
         <label htmlFor="team_code" className="font-bold font-mono ">
-          Search Team
+          Search Team with Team Code
         </label>
-        <input
-          name="team_code"
-          type="text"
-          value={teamCode}
-          onChange={(e) => {
-            handleSearchCodeChange(e);
-            setTeamCode(e.target.value.replace(/\s/g, ""));
-          }}
-          onKeyDown={(e) => e.key === " " && e.preventDefault()}
-          maxLength={10}
-          placeholder="Enter Team Code"
-          className="border p-2 rounded w-64"
-        />
+        <div className="flex gap-3 items-center">
+          <input
+            name="team_code"
+            type="text"
+            value={teamCode}
+            onChange={(e) => {
+              handleSearchCodeChange(e);
+              setTeamCode(e.target.value.replace(/\s/g, ""));
+            }}
+            onKeyDown={(e) => e.key === " " && e.preventDefault()}
+            maxLength={10}
+            placeholder="Enter Team Code"
+            className="border p-2 rounded w-64"
+          />
+          <button
+            onClick={() => searchTeamData.mutate()}
+            className={`${
+              teamCode == "" || !isValid ? `bg-slate-500` : `bg-blue-500`
+            } text-white p-2 rounded `}
+            disabled={!teamCode || !isValid}
+          >
+            Search Team
+          </button>
+          <button
+            onClick={() => {
+              setTeamCode("");
+              setTeamData(null);
+              setErrorMessage("");
+              setIsValid(true);
+              setPlayerList([]);
+              setPlayerListError("");
+            }}
+            className="bg-red-500 text-white p-2 rounded "
+          >
+            Clear
+          </button>
+        </div>
       </div>
-      <div className="flex gap-2">
-        <button
-          onClick={() => searchTeamData.mutate()}
-          className={`${
-            teamCode == "" || !isValid ? `bg-slate-500` : `bg-blue-500`
-          } text-white p-2 rounded mt-2 `}
-          disabled={!teamCode || !isValid}
-        >
-          Search Team
-        </button>
-        <button
-          onClick={() => {
-            setTeamCode("");
-            setTeamData(null);
-            setErrorMessage("");
-            setIsValid(true);
-            setPlayerList([]);
-            setPlayerListError("");
-          }}
-          className="bg-red-500 text-white p-2 rounded mt-2"
-        >
-          Clear
-        </button>
-      </div>
+
       {!isValid && (
         <h1 className="text-center text-red-500 font-bold">
           Invalid Team Code (E.g. For Team ID like : 'RED123456', the Team Code

@@ -141,55 +141,60 @@ const DataTable = () => {
                 </Tooltip>
               </div>
             </div>
-            <div className="overflow-x-scroll no-scrollbar">
-              <Table
-                className="overflow-x-scroll max-h-50 no-scrollbar border-4 text-center "
-                striped
-              >
-                <Table.Head className="text-white sticky top-0 z-20 bg-[#15283c]">
-                  {datas.length > 0 &&
-                    datas[0] &&
-                    Object.keys(datas[0]).map((key, index) => (
-                      <Table.HeadCell key={index} className="bg-[#15283c] ">
-                        {key}
-                      </Table.HeadCell>
-                    ))}
-                </Table.Head>
-                <Table.Body className="divide-y">
-                  {currentRows.map((row, index) => (
-                    <Table.Row
-                      key={row.id || row.Id}
-                      className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                    >
-                      {(row.id || row.Id) && (
-                        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-center dark:text-white">
-                          {index + 1}
-                        </Table.Cell>
-                      )}
-
-                      {Object.entries(row)
-                        .filter(([key]) => key.toLocaleLowerCase() !== "id")
-                        .map(([key, value]) => (
-                          <Table.Cell key={key} className="">
-                            {value.toString().split("/")[1] == "uploads" ? (
-                              <img
-                                src={`${
-                                  import.meta.env?.VITE_BASE_URL
-                                }${value}`}
-                                alt={`icon`}
-                                className="h-16 w-16"
-                              />
-                            ) : (
-                              <p>{formatString(value)}</p>
-                            )}
+            <div className="flex flex-col h-[calc(100vh-100px)]">
+              <div className="flex-1 overflow-auto">
+                <Table
+                  className="overflow-x-scroll max-h-50 no-scrollbar border-4 text-center "
+                  striped
+                >
+                  <Table.Head className="text-white sticky top-0 z-20 ">
+                    {datas.length > 0 &&
+                      datas[0] &&
+                      Object.keys(datas[0]).map((key, index) => (
+                        <Table.HeadCell
+                          key={index}
+                          className="bg-sidebar-head "
+                        >
+                          {key}
+                        </Table.HeadCell>
+                      ))}
+                  </Table.Head>
+                  <Table.Body className="divide-y">
+                    {currentRows.map((row, index) => (
+                      <Table.Row
+                        key={row.id || row.Id}
+                        className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                      >
+                        {(row.id || row.Id) && (
+                          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-center dark:text-white">
+                            {index + 1}
                           </Table.Cell>
-                        ))}
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
+                        )}
+
+                        {Object.entries(row)
+                          .filter(([key]) => key.toLocaleLowerCase() !== "id")
+                          .map(([key, value]) => (
+                            <Table.Cell key={key} className="">
+                              {value.toString().split("/")[1] == "uploads" ? (
+                                <img
+                                  src={`${
+                                    import.meta.env?.VITE_BASE_URL
+                                  }${value}`}
+                                  alt={`icon`}
+                                  className="h-16 w-16 mx-auto"
+                                />
+                              ) : (
+                                <p>{formatString(value)}</p>
+                              )}
+                            </Table.Cell>
+                          ))}
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table>
+              </div>
             </div>
-            <div className="sticky bottom-0 bg-white mt-5 py-2 w-full">
+            <div className="sticky bottom-0 bg-white mt-5 py-2 w-full shadow-md">
               <Suspense fallback={<Spinner color="info" />}>
                 <Pagination
                   totalPages={Math.ceil(datas.length / rowsPerPage)}

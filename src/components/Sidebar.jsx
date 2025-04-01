@@ -2,10 +2,15 @@ import { HR, Tooltip } from "flowbite-react";
 import { lazy, memo, useEffect, useState } from "react";
 import DropDown from "./DropDown";
 import { MasterSubMenuDatas } from "../constants/SideBarData";
+import { useNavigate } from "react-router";
+import { logout } from "../redux/slice/userSlice";
+import { useDispatch } from "react-redux";
 
 // const DropDown=lazy(()=>import('./DropDown'));
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
   const path = location.pathname;
   const newPath = path.split("/");
@@ -19,7 +24,7 @@ const Sidebar = () => {
     <div
       className={` ${
         open ? "w-72" : "w-24"
-      } bg-[#15283c] h-screen p-0  pt-0 relative flex flex-col duration-300`}
+      } bg-sidebar-body h-screen p-0  pt-0 relative flex flex-col duration-300 border-r-1 border-black shadow-lg`}
     >
       <img
         src="/assets/control.png"
@@ -30,8 +35,8 @@ const Sidebar = () => {
         alt="image"
       />
       <div
-        className={`flex px-5 gap-x-4 items-center w-full h-20 ${
-          !open ? "bg-[#db4d21fb]" : "bg-[#214162]"
+        className={`flex px-5 gap-x-4 items-center w-full h-20 rounded-br-2xl ${
+          !open ? "bg-sidebar-head-small" : "bg-sidebar-head"
         }`}
       >
         <img
@@ -50,7 +55,7 @@ const Sidebar = () => {
           CricGiri
         </h1>
       </div>
-      <HR className="my-0" />
+      {/* <HR className="my-0" /> */}
       <div className="flex-1 overflow-y-auto no-scrollbar py-4">
         <ul className="p-5">
           {MasterSubMenuDatas.map((Menu, index) => (
@@ -63,13 +68,18 @@ const Sidebar = () => {
                 } ${!open && "justify-center"} `}
                 onClick={() => setActive(Menu.title.toLowerCase())}
               >
-                <div className={`flex gap-4 w-full`}>
+                <div className={`flex gap-4 w-full text-gray-800`}>
                   {!open ? (
                     <>
-                      <Tooltip content={Menu.title} placement="right">
+                      <Tooltip
+                        content={Menu.title}
+                        placement="right"
+                        className="items-center"
+                      >
                         <img
                           onClick={() => setOpen(true)}
                           src={`/assets/${Menu.src}.png`}
+                          className=""
                           loading="lazy"
                           alt="image"
                         />
@@ -95,7 +105,7 @@ const Sidebar = () => {
                       {/* </div> */}
                       {Menu?.list?.length > 0 ? (
                         <>
-                          <div className="w-full">
+                          <div className="w-full ease-in-out ">
                             <DropDown title={Menu.title}>{Menu.list}</DropDown>
                           </div>
                         </>
@@ -121,7 +131,14 @@ const Sidebar = () => {
           ))}
         </ul>
       </div>
-      <div className="bg-[#db4d21fb] w-full h-12 rounded-t-xl self-end flex items-center pl-5 gap-5 cursor-pointer">
+      <div
+        className="bg-sidebar-foot w-full h-12 rounded-t-xl self-end flex items-center pl-5 gap-5 cursor-pointer"
+        onClick={() => {
+          localStorage.removeItem("isAuth");
+          dispatch(logout());
+          navigate("/login");
+        }}
+      >
         <img
           src="/assets/logout.png"
           loading="lazy"
