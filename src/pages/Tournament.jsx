@@ -195,7 +195,7 @@ const Tournament = () => {
                           .map((key, index) => (
                             <Table.HeadCell
                               key={index}
-                              className="bg-sidebar-head-small"
+                              className="bg-sidebar-head"
                             >
                               {key}
                             </Table.HeadCell>
