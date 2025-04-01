@@ -132,7 +132,7 @@ const Sidebar = () => {
         </ul>
       </div>
       <div
-        className="bg-sidebar-foot w-full h-12 rounded-t-xl self-end flex items-center pl-5 gap-5 cursor-pointer"
+        className="bg-sidebar-head w-full h-11 rounded-tr-2xl self-end flex items-center pl-5 gap-5 cursor-pointer"
         onClick={() => {
           localStorage.removeItem("isAuth");
           dispatch(logout());

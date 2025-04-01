@@ -23,8 +23,8 @@ const router = createBrowserRouter(
       {/* <Route path='/' element={<DashboardProtectedRoute />}> */}
       <Route path="/" element={<Dashboard />}>
         <Route path="/master/:select" element={<DataTable />} />
-        <Route path="/users/profiles" element={<UserImageUpdater />} />
-        <Route path="/teams/team-info" element={<Teams />} />
+        <Route path="/user/profiles" element={<UserImageUpdater />} />
+        <Route path="/team/team-info" element={<Teams />} />
         <Route path="/tournament/tournaments" element={<Tournament />} />
         <Route path="/profile" element={<UserProfile />} />
       </Route>
