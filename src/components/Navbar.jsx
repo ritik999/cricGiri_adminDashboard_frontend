@@ -32,10 +32,11 @@ const Navbar = () => {
   // }, [isSuccess, isError, dispatch, navigate]);
 
   return (
-    <div className="h-12 bg-[#2b50a7] flex justify-between items-center p-8 gap-10 shadow-md">
+    <div className="h-12 bg-[#ffffff] flex justify-between items-center p-8 gap-10 shadow-md">
       <div className="flex-1 cursor-pointer ">
-        <h1 className="text-white font-bold text-2xl tracking-wider bg-transparent">
-          Cric<span className="text-yellow-300">Giri</span>
+        <h1 className="text-blue-800 font-bold text-2xl tracking-wider bg-transparent">
+          Cric
+          <span className="text-sidebar-foot underline">Giri</span>
         </h1>
       </div>
       <div>
@@ -43,7 +44,12 @@ const Navbar = () => {
           className="z-50"
           arrowIcon={false}
           inline
-          label={<Avatar rounded />}
+          label={
+            <Avatar
+              rounded
+              className="border-2 border-slate-800 shadow-lg rounded-full"
+            />
+          }
         >
           <Dropdown.Header>
             <span className="block truncate text-xs font-sm">

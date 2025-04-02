@@ -98,9 +98,9 @@ const UserImageUpdater = () => {
   };
 
   return (
-    <div className="p-5 font-mono relative ">
+    <div className="p-5  relative ">
       <div className="flex flex-col ">
-        <label htmlFor="profile_code" className="font-bold font-mono">
+        <label htmlFor="profile_code" className="font-semibold text-slate-800">
           Enter User Profile Code
         </label>
         <div className="flex gap-3 items-center ">
@@ -165,7 +165,7 @@ const UserImageUpdater = () => {
         <p className="text-red-500 mt-2 text-center text-xl">{errorMessage}</p>
       ) : (
         <>
-          <div className="mt-5 p-4 w-fit  border-2 rounded flex items-center gap-10">
+          <div className="mt-5 p-4  w-fit border-2 rounded-lg flex items-center gap-28 mx-auto bg-blue-800/10">
             <div className="mt-3 flex flex-col">
               <img
                 src={`${import.meta.env?.VITE_BASE_URL}${
@@ -191,11 +191,11 @@ const UserImageUpdater = () => {
               </button>
               {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
             </div>
-            <div className="font-mono flex flex-col gap-5">
-              <h2 className="font-bold text-sidebar-head-small">
-                User Details
+            <div className=" flex flex-col gap-5">
+              <h2 className="font-bold text-sidebar-head-small text-lg">
+                Player Info
               </h2>
-              <p>
+              <p className="text-md">
                 <strong>Name:</strong> {userData?.full_name || ""}
               </p>
               <p>

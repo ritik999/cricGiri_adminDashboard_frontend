@@ -63,7 +63,7 @@ const DropDown = ({ title, children }) => {
                       subTitle.apiBody
                     )
                   }
-                  className={`py-2 px-6 my-1 hover:bg-sidebar-head-small rounded-lg font-semibold ${
+                  className={`py-2 px-6 my-1 hover:bg-blue-500/85 rounded-lg font-semibold ${
                     subTitle.title == (activePath || "Player Role")
                       ? "bg-sidebar-head-small text-white"
                       : ""
