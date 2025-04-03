@@ -154,112 +154,112 @@ const Tournament = () => {
                 )}
             </select> */}
 
-                <div>
-                    {isLoading ? (
-                        <div className="text-center">
-                            <Spinner />
-                        </div>
-                    ) : isError ? (
-                        <h1 className="text-center text-red-500 font-bold">
-                            Error fetching data
-                        </h1>
-                    ) : data?.length === 0 ? (
-                        <h1 className="text-center font-bold">No Data available to Show</h1>
-                    ) : (
-                        <>
-                            <div>
-                                <div className="overflow-x-scroll no-scrollbar">
-                                    <Table
-                                        className="overflow-x-scroll max-h-50 no-scrollbar border-4"
-                                        striped
-                                    >
-                                        <Table.Head className="text-white sticky top-0 z-20 bg-[#15283c]">
-                                            {data[0] &&
-                                                Object.keys(data[0])
-                                                    .filter((key) =>
-                                                        [
-                                                            "Id",
-                                                            "Title",
-                                                            "StartDate",
-                                                            "EndDate",
-                                                            "CategoryName",
-                                                            "BallTypeName",
-                                                            "PitchTypeName",
-                                                            "MatchTypeName",
-                                                            "CityName",
-                                                            "StadiumName",
-                                                            "OrganiserName",
-                                                            "OrganiserPhone",
-                                                            "currentStatusName",
-                                                            "noOfMatchs",
-                                                        ].includes(key)
-                                                    )
-                                                    .map((key, index) => (
-                                                        <Table.HeadCell
-                                                            key={index}
-                                                            className="bg-[#15283c]"
-                                                        >
-                                                            {key}
-                                                        </Table.HeadCell>
-                                                    ))}
-                                        </Table.Head>
-                                        <Table.Body className="divide-y">
-                                            {currentRows.map((row, index) => (
-                                                <Table.Row
-                                                    key={row.id || row.Id}
-                                                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                                                >
-                                                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                                        {index + 1}
-                                                    </Table.Cell>
-                                                    {Object.entries(row)
-                                                        .filter(([key]) =>
-                                                            [
-                                                                "Title",
-                                                                "StartDate",
-                                                                "EndDate",
-                                                                "CategoryName",
-                                                                "BallTypeName",
-                                                                "PitchTypeName",
-                                                                "MatchTypeName",
-                                                                "CityName",
-                                                                "StadiumName",
-                                                                "OrganiserName",
-                                                                "OrganiserPhone",
-                                                                "currentStatusName",
-                                                                "noOfMatchs",
-                                                            ].includes(key)
-                                                        )
-                                                        .map(([key, value]) => (
-                                                            <Table.Cell key={key}>
-                                                                <input
-                                                                    type="text"
-                                                                    value={value?.toString().toLowerCase()}
-                                                                    className="px-2 py-1 rounded select-none bg-transparent border-none capitalize"
-                                                                    disabled
-                                                                />
-                                                            </Table.Cell>
-                                                        ))}
-                                                </Table.Row>
-                                            ))}
-                                        </Table.Body>
-                                    </Table>
-                                </div>
-                                <div className="sticky bottom-0 mt-5 bg-white py-2 w-full">
-                                    <Pagination
-                                        totalPages={totalPages}
-                                        currentPage={currentPage}
-                                        handlePageChange={handlePageChange}
-                                    />
-                                </div>
-                            </div>
-                        </>
-                    )}
-                </div>
+        <div>
+          {isLoading ? (
+            <div className="text-center">
+              <Spinner />
             </div>
-            <ToastContainer />
-        </>
-    );
+          ) : isError ? (
+            <h1 className="text-center text-red-500 font-bold">
+              Error fetching data
+            </h1>
+          ) : data?.length === 0 ? (
+            <h1 className="text-center font-bold">No Data available to Show</h1>
+          ) : (
+            <>
+              <div>
+                <div className="overflow-x-scroll no-scrollbar">
+                  <Table
+                    className="overflow-x-scroll max-h-50 no-scrollbar border-4"
+                    striped
+                  >
+                    <Table.Head className="text-white sticky top-0 z-20 l">
+                      {data[0] &&
+                        Object.keys(data[0])
+                          .filter((key) =>
+                            [
+                              "Id",
+                              "Title",
+                              "StartDate",
+                              "EndDate",
+                              "CategoryName",
+                              "BallTypeName",
+                              "PitchTypeName",
+                              "MatchTypeName",
+                              "CityName",
+                              "StadiumName",
+                              "OrganiserName",
+                              "OrganiserPhone",
+                              "currentStatusName",
+                              "noOfMatchs",
+                            ].includes(key)
+                          )
+                          .map((key, index) => (
+                            <Table.HeadCell
+                              key={index}
+                              className="bg-sidebar-head"
+                            >
+                              {key}
+                            </Table.HeadCell>
+                          ))}
+                    </Table.Head>
+                    <Table.Body className="divide-y">
+                      {currentRows.map((row, index) => (
+                        <Table.Row
+                          key={row.id || row.Id}
+                          className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                        >
+                          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                            {index + 1}
+                          </Table.Cell>
+                          {Object.entries(row)
+                            .filter(([key]) =>
+                              [
+                                "Title",
+                                "StartDate",
+                                "EndDate",
+                                "CategoryName",
+                                "BallTypeName",
+                                "PitchTypeName",
+                                "MatchTypeName",
+                                "CityName",
+                                "StadiumName",
+                                "OrganiserName",
+                                "OrganiserPhone",
+                                "currentStatusName",
+                                "noOfMatchs",
+                              ].includes(key)
+                            )
+                            .map(([key, value]) => (
+                              <Table.Cell key={key}>
+                                <input
+                                  type="text"
+                                  value={value?.toString().toLowerCase()}
+                                  className="px-2 py-1 rounded select-none bg-transparent border-none capitalize"
+                                  disabled
+                                />
+                              </Table.Cell>
+                            ))}
+                        </Table.Row>
+                      ))}
+                    </Table.Body>
+                  </Table>
+                </div>
+                <div className="sticky bottom-0 mt-5 bg-white py-2 w-full">
+                  <Pagination
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    handlePageChange={handlePageChange}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+      <ToastContainer />
+    </>
+  );
 };
 
 export default Tournament;

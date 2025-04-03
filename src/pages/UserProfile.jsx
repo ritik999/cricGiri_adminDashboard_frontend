@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { fetchData } from "../utils/fetchFunction";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Spinner } from "flowbite-react";
 
 const UserImageUpdater = () => {
@@ -47,7 +47,7 @@ const UserImageUpdater = () => {
     if (isNaN(numValue) || value.trim() === "") {
       setErrorMessage("");
       setIsValid(false);
-      // console.log(isValid);
+
       return;
     } else {
       setIsValid(true);
@@ -97,51 +97,55 @@ const UserImageUpdater = () => {
   };
 
   return (
-    <div className="p-5 font-mono">
+    <div className="p-5  relative ">
       <div className="flex flex-col ">
-        <label htmlFor="profile_code" className="font-bold font-mono">
-          Search User
+        <label htmlFor="profile_code" className="font-semibold text-slate-800">
+          Enter User Profile Code
         </label>
-        <input
-          name="profile_code"
-          type="text"
-          value={profileCode}
-          onChange={(e) => {
-            handleSearchCodeChange(e);
-            setProfileCode(e.target.value.replace(/\s/g, ""));
-          }}
-          onKeyDown={(e) => e.key === " " && e.preventDefault()}
-          maxLength={10}
-          placeholder="Enter Profile Code"
-          className="border p-2 rounded w-64"
-        />
+        <div className="flex gap-3 items-center ">
+          <input
+            name="profile_code"
+            type="text"
+            value={profileCode}
+            onChange={(e) => {
+              handleSearchCodeChange(e);
+              setProfileCode(e.target.value.replace(/\s/g, ""));
+            }}
+            onKeyDown={(e) => e.key === " " && e.preventDefault()}
+            maxLength={10}
+            placeholder="Enter Profile Code"
+            className="border p-2 rounded w-64 z-50"
+          />
+          <button
+            // onClick={fetchUserByProfileCode}
+            onClick={() => searchData.mutate()}
+            className={`${
+              profileCode == "" || !isValid ? `bg-slate-500` : `bg-blue-500`
+            } text-white p-2 rounded  `}
+            disabled={!profileCode || !isValid}
+          >
+            Search User
+          </button>
+          <button
+            onClick={() => {
+              setProfileCode("");
+              setUserData(null);
+              setErrorMessage("");
+              setFileError("");
+              setIsValid(true);
+            }}
+            className="bg-red-500 text-white p-2 rounded "
+          >
+            Clear
+          </button>
+        </div>
       </div>
-      <div className="flex gap-2">
-        <button
-          // onClick={fetchUserByProfileCode}
-          onClick={() => searchData.mutate()}
-          className={`${
-            profileCode == "" || !isValid ? `bg-slate-500` : `bg-blue-500`
-          } text-white p-2 rounded mt-2 `}
-          disabled={!profileCode || !isValid}
-        >
-          Search User
-        </button>
-        <button
-          onClick={() => {
-            setProfileCode("");
-            setUserData(null);
-            setErrorMessage("");
-            setFileError("");
-            setIsValid(true);
-          }}
-          className="bg-red-500 text-white p-2 rounded mt-2"
-        >
-          Clear
-        </button>
-      </div>
+
+      <div className="flex gap-2"></div>
+
+      {/* <div className="absolute inset-0 bg-[url('/assets/main-bg.webp')] bg-center bg-cover opacity-35 w-96 h-96 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] scale-150"></div> */}
       {!isValid && (
-        <h1 className="text-center text-red-500 font-bold">
+        <h1 className="text-center text-red-600 font-bold text-xl bg-transparent z-50">
           Profile code must contain only numbers (no spaces)
         </h1>
       )}
@@ -157,47 +161,54 @@ const UserImageUpdater = () => {
           Error Fetching user Try again
         </h1>
       ) : userData === null ? (
-        <p className="text-red-500 mt-2">{errorMessage}</p>
+        <p className="text-red-500 mt-2 text-center text-xl">{errorMessage}</p>
       ) : (
-        <div className="mt-5 p-4 border rounded flex justify-between ">
-          <div className="font-mono flex flex-col gap-5">
-            <h2 className="font-bold text-cyan-700">User Details</h2>
-            <p>
-              <strong>Name:</strong> {userData?.full_name || ""}
-            </p>
-            <p>
-              <strong>Email:</strong> {userData?.email_id || "---"}
-            </p>
-            <p>
-              <strong>Phone:</strong> {userData?.mobile_number || ""}
-            </p>
-            <p>
-              <strong>Country:</strong> {userData?.countryName || ""}
-            </p>
-          </div>
+        <>
+          <div className="mt-5 p-4  w-fit border-2 rounded-lg flex items-center gap-28 mx-auto bg-blue-800/10">
+            <div className="mt-3 flex flex-col">
+              <img
+                src={`${import.meta.env?.VITE_BASE_URL}${
+                  userData?.profile_image
+                }`}
+                alt={`${userData?.profile_image?.toString().split("-")[1]}`}
+                className="w-44 h-44 rounded-full border"
+              />
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="mt-2 "
+              />
 
-          <div className="mt-3 flex flex-col">
-            <img
-              src={`${import.meta.env?.VITE_BASE_URL}${
-                userData?.profile_image
-              }`}
-              alt={`${userData?.profile_image?.toString().split("-")[1]}`}
-              className="w-44 h-44 rounded-full border"
-            />
-            <input type="file" onChange={handleFileChange} className="mt-2 " />
-
-            <button
-              onClick={uploadImage}
-              className={`${
-                selectedFile ? "bg-green-500" : "bg-slate-400"
-              } text-white p-2 rounded mt-2`}
-              disabled={!selectedFile}
-            >
-              Change Image
-            </button>
-            {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
+              <button
+                onClick={uploadImage}
+                className={`${
+                  selectedFile ? "bg-green-500" : "bg-slate-400"
+                } text-white p-2 rounded mt-2`}
+                disabled={!selectedFile}
+              >
+                Change Image
+              </button>
+              {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
+            </div>
+            <div className=" flex flex-col gap-5">
+              <h2 className="font-bold text-sidebar-head-small text-lg">
+                Player Info
+              </h2>
+              <p className="text-md">
+                <strong>Name:</strong> {userData?.full_name || ""}
+              </p>
+              <p>
+                <strong>Email:</strong> {userData?.email_id || "---"}
+              </p>
+              <p>
+                <strong>Phone:</strong> {userData?.mobile_number || ""}
+              </p>
+              <p>
+                <strong>Country:</strong> {userData?.countryName || ""}
+              </p>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

@@ -38,7 +38,7 @@ const Teams = () => {
         import.meta.env?.VITE_TOKEN
       ),
     onSuccess: (data) => {
-      if (data.hasOwnProperty("status") && data.status == 0) {
+      if (data.hasOwnProperty("status") && data?.status == 0) {
         setPlayerList([]);
         setPlayerListError("");
         setTeamData(null);
@@ -51,6 +51,8 @@ const Teams = () => {
       }
     },
     onError: (error) => {
+      setErrorMessage("Error Fetching Team Try again");
+      setTeamData(null);
       console.error("Error fetching data: ", error);
     },
   });
@@ -67,61 +69,63 @@ const Teams = () => {
       console.log(data);
       if (data.hasOwnProperty("status") && data.status == 0) {
         setPlayerList([]);
-        setPlayerListError(`No players in this Team`);
+        setPlayerListError(`No players in this Team Yet`);
       } else {
         setPlayerListError("");
         setPlayerList(data);
       }
     },
     onError: (error) => {
+      setPlayerList([]);
       console.error("Error fetching players list data: ", error);
     },
   });
 
   return (
-    <div>
+    <div className="p-5">
       <div className="flex flex-col">
-        <label htmlFor="team_code" className="font-bold font-mono ">
-          Search Team
+        <label htmlFor="team_code" className="font-semibold text-slate-800 ">
+          Search Team with Team Code
         </label>
-        <input
-          name="team_code"
-          type="text"
-          value={teamCode}
-          onChange={(e) => {
-            handleSearchCodeChange(e);
-            setTeamCode(e.target.value.replace(/\s/g, ""));
-          }}
-          onKeyDown={(e) => e.key === " " && e.preventDefault()}
-          maxLength={10}
-          placeholder="Enter Team Code"
-          className="border p-2 rounded w-64"
-        />
+        <div className="flex gap-3 items-center">
+          <input
+            name="team_code"
+            type="text"
+            value={teamCode}
+            onChange={(e) => {
+              handleSearchCodeChange(e);
+              setTeamCode(e.target.value.replace(/\s/g, ""));
+            }}
+            onKeyDown={(e) => e.key === " " && e.preventDefault()}
+            maxLength={10}
+            placeholder="Enter Team Code"
+            className="border p-2 rounded w-64"
+          />
+          <button
+            onClick={() => searchTeamData.mutate()}
+            className={`${
+              teamCode == "" || !isValid ? `bg-slate-500` : `bg-blue-500`
+            } text-white p-2 rounded `}
+            disabled={!teamCode || !isValid}
+          >
+            Search Team
+          </button>
+          <button
+            onClick={() => {
+              setTeamCode("");
+              setTeamData(null);
+              setErrorMessage("");
+              setIsValid(true);
+              setPlayerList([]);
+              setPlayerListError("");
+            }}
+            className="bg-red-500 text-white p-2 rounded "
+          >
+            Clear
+          </button>
+        </div>
       </div>
-      <div className="flex gap-2">
-        <button
-          onClick={() => searchTeamData.mutate()}
-          className={`${
-            teamCode == "" || !isValid ? `bg-slate-500` : `bg-blue-500`
-          } text-white p-2 rounded mt-2 `}
-          disabled={!teamCode || !isValid}
-        >
-          Search Team
-        </button>
-        <button
-          onClick={() => {
-            setTeamCode("");
-            setTeamData(null);
-            setErrorMessage("");
-            setIsValid(true);
-            setPlayerList([]);
-            setPlayerListError("");
-          }}
-          className="bg-red-500 text-white p-2 rounded mt-2"
-        >
-          Clear
-        </button>
-      </div>
+
       {!isValid && (
         <h1 className="text-center text-red-500 font-bold">
           Invalid Team Code (E.g. For Team ID like : 'RED123456', the Team Code
@@ -134,15 +138,15 @@ const Teams = () => {
           <Spinner />
         </div>
       ) : searchTeamData.isError ? (
-        <h1 className="text-center text-red-500 font-bold">
-          Error Fetching Team Try again
-        </h1>
+        <h1 className="text-center text-red-500 font-bold">{errorMessage}</h1>
       ) : teamData === null ? (
-        <p className="text-red-500 mt-2">{errorMessage}</p>
+        <p className="text-red-500 mt-2 text-center font-semibold text-lg">
+          {errorMessage}
+        </p>
       ) : (
         <>
           <div className="mt-5 p-4 border rounded flex  justify-between ">
-            <div className="font-mono flex flex-col gap-5">
+            <div className=" flex flex-col gap-5">
               <h2 className="font-bold text-cyan-700">Team Information</h2>
               <p className="capitallize">
                 <strong>Name:</strong> {teamData?.name || ""}
@@ -170,21 +174,27 @@ const Teams = () => {
                 className="overflow-x-scroll max-h-50 no-scrollbar border-4 text-center w-[800px]"
                 striped
               >
-                <Table.Head>
-                  <Table.HeadCell>S.No.</Table.HeadCell>
-                  <Table.HeadCell>Name</Table.HeadCell>
-                  <Table.HeadCell>Role</Table.HeadCell>
+                <Table.Head className="">
+                  <Table.HeadCell className="bg-purple-500/40">
+                    S.No.
+                  </Table.HeadCell>
+                  <Table.HeadCell className="bg-purple-500/40">
+                    Name
+                  </Table.HeadCell>
+                  <Table.HeadCell className="bg-purple-500/40">
+                    Role
+                  </Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
                   {playerList?.map((player, index) => (
                     <Table.Row key={player.playerId} className="bg-white">
                       <Table.Cell>{index + 1}</Table.Cell>
-                      <Table.Cell className="font-medium">
-                        {player.name.toUpperCase()}
+                      <Table.Cell className="font-medium capitalize">
+                        {player.name.toLowerCase()}
                         {` `}
                       </Table.Cell>
                       <Table.Cell>
-                        {player.isWicketkeeper === "1" && "Wicket Keeper"}{" "}
+                        {player.isWicketkeeper === "1" && "WicketKeeper"}{" "}
                         {player.isCaptain === "1" && "Captain"}
                         {player.isCaptain === "0" &&
                           player.isWicketkeeper === "0" &&

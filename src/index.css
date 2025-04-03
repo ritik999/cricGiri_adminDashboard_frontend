@@ -4,11 +4,12 @@
 @tailwind utilities;
 
 
-/* @layer base {
+@layer base {
     body {
-      font-family: 'Inter', 'Arial', sans-serif;
+      font-family: 'Poppins', 'Arial', sans-serif;
     }
-  } */
+  }
+
 
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
