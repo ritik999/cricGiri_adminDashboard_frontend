@@ -17,7 +17,7 @@ export const fetchData = async (
 
     if (!res.ok) {
       console.error("Error fetching data:", res.statusText);
-      return;
+      return { status: 0, message: "Error occurred" };
     }
 
     const data = await res.json();

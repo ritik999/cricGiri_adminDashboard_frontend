@@ -30,7 +30,7 @@ const Login = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error("something went wrong");
+      toast.error("Something went wrong");
     }
   }, [error]);
 
@@ -74,7 +74,7 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[url('/assets/bg-login.webp')] bg-cover bg-center">
       <motion.div
-        className="bg-slate-300  bg-opacity-70 backdrop-blur-none p-8 rounded-lg shadow-lg w-full max-w-md"
+        className="bg-slate-200  bg-opacity-90 backdrop-blur-none p-8 rounded-lg shadow-lg w-full max-w-md"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -93,7 +93,7 @@ const Login = () => {
                 Log-in to <span className="text-blue-800">Cric</span>Giri
               </motion.h1>
               <motion.p
-                className="font-bold text-white font-sans"
+                className="font-bold text-blue-900 font-sans"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
@@ -154,7 +154,7 @@ const Login = () => {
 
               <motion.button
                 type="submit"
-                className={`w-full bg-blue-800 hover:bg-blue-700 text-white py-3 rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-700 font-bold`}
+                className={`w-full bg-yellow-400 hover:bg-yellow-700 text-white py-3 rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-700 font-bold`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
@@ -166,7 +166,7 @@ const Login = () => {
 
               <div className="mt-4 text-center">
                 <motion.p
-                  className="text-sm font-bold text-gray-900 hover:text-blue-700 cursor-pointer"
+                  className="text-sm font-bold text-gray-900 hover:text-blue-900 cursor-pointer"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.6 }}

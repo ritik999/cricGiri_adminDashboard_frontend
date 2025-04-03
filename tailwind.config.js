@@ -6,9 +6,9 @@ export default {
     extend: {
       colors: {
         "sidebar-head-small": "#2a75e6",
-        "sidebar-head": "#284eb6",
+        "sidebar-head": "#326ad2",
         "sidebar-body": "#fafafa",
-        "sidebar-foot": "#db4d21fb",
+        "sidebar-foot": "#ffa600",
         "main-container": "#fafafb",
       },
     },

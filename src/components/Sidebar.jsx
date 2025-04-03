@@ -55,31 +55,33 @@ const Sidebar = () => {
           CricGiri
         </h1>
       </div>
-      {/* <HR className="my-0" /> */}
+
       <div className="flex-1 overflow-y-auto no-scrollbar py-4">
         <ul className="p-5">
           {MasterSubMenuDatas.map((Menu, index) => (
             <>
               <li
                 key={index}
-                className={`flex  rounded-md p-2 cursor-pointer hover:bg-gray-300/20 backdrop-blur-none text-white text-sm gap-x-4 mb-2 
+                className={`flex  rounded-md p-2 cursor-pointer  backdrop-blur-none text-white text-sm gap-x-2 mb-2 ${
+                  !open ? "hover:bg-yellow-300/50" : "hover:bg-slate-300/50"
+                }
               ${Menu.gap ? "mt-9" : "mt-2"} ${
                   Menu.title.toLowerCase() === active && "bg-white/30"
                 } ${!open && "justify-center"} `}
                 onClick={() => setActive(Menu.title.toLowerCase())}
               >
-                <div className={`flex gap-4 w-full text-gray-800`}>
+                <div className={`flex gap-2 w-full text-gray-800`}>
                   {!open ? (
                     <>
                       <Tooltip
                         content={Menu.title}
                         placement="right"
-                        className="items-center"
+                        className="items-center "
                       >
                         <img
                           onClick={() => setOpen(true)}
                           src={`/assets/${Menu.src}.png`}
-                          className=""
+                          className="size-9"
                           loading="lazy"
                           alt="image"
                         />
@@ -101,7 +103,7 @@ const Sidebar = () => {
                         className="size-6"
                         alt="image"
                       />
-                      <div className="w-[1px] bg-gray-600 ml-4 max-h-6"></div>
+                      <div className="w-[1px] bg-gray-600 ml-1 max-h-6"></div>
                       {/* </div> */}
                       {Menu?.list?.length > 0 ? (
                         <>
@@ -132,7 +134,9 @@ const Sidebar = () => {
         </ul>
       </div>
       <div
-        className="bg-sidebar-head w-full h-11 rounded-tr-2xl self-end flex items-center pl-5 gap-5 cursor-pointer"
+        className={`bg-sidebar-foot w-full h-11 rounded-tr-2xl self-end flex items-center gap-3 cursor-pointer ${
+          open ? "pl-5 justify-normal" : "justify-center"
+        }`}
         onClick={() => {
           localStorage.removeItem("isAuth");
           dispatch(logout());
